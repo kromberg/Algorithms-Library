@@ -9,8 +9,8 @@
 #include <cstdint>
 #include <iostream>
 
-#include "Graph.h"
-#include "GraphMatrix.h"
+#include "graphs/Graph.h"
+#include "graphs/GraphMatrix.h"
 
 int main(int argc, const char * argv[])
 {
