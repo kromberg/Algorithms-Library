@@ -11,9 +11,23 @@
 
 #include "graphs/Graph.h"
 #include "graphs/GraphMatrix.h"
+#include "General/Knapsack.h"
 
 int main(int argc, const char * argv[])
 {
+    Knapsack knapsack;
+    std::ifstream fin("knapsack.in");
+    if (!knapsack.read(fin))
+    {
+        std::cout << "Cannot read Knapsack" << std::endl;
+        exit(2);
+    }
+    uint32_t val = 0;
+    knapsack.run(165, val);
+    std::cout << val << std::endl;
+
+    std::cin.get();
+#if 0
     // insert code here...
     std::cout << "Creating graph.\n";
     std::ifstream fin("graph.in");
@@ -29,7 +43,7 @@ int main(int argc, const char * argv[])
     graphMatrix.MSTPrim(mst);
     std::ofstream foutMst1("graph.mst1.out");
     mst.write(foutMst1);
-
+#endif
 #if 0
     int32_t length = 0;
     graphMatrix.Dijkstra(1, 5, length);

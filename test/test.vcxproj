@@ -129,6 +129,10 @@
       <Project>{296732d6-dafc-4dab-a65d-1468a50e3e8d}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="graph.in" />
+    <None Include="knapsack.in" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
