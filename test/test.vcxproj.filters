@@ -13,7 +13,7 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Graph Files">
+    <Filter Include="Input Files">
       <UniqueIdentifier>{4c6e610c-9b28-4ee1-a627-e79d8c9e10dc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -24,10 +24,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="graph.in">
-      <Filter>Graph Files</Filter>
+      <Filter>Input Files</Filter>
     </None>
     <None Include="knapsack.in">
-      <Filter>Graph Files</Filter>
+      <Filter>Input Files</Filter>
+    </None>
+    <None Include="sequence_alignment.in">
+      <Filter>Input Files</Filter>
     </None>
   </ItemGroup>
 </Project>

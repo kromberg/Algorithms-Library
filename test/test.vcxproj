@@ -132,6 +132,7 @@
   <ItemGroup>
     <None Include="graph.in" />
     <None Include="knapsack.in" />
+    <None Include="sequence_alignment.in" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

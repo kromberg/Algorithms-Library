@@ -8,12 +8,14 @@
 
 #include <cstdint>
 #include <iostream>
+#include <cstdint>
 
 #include "graphs/Graph.h"
 #include "graphs/GraphMatrix.h"
 #include "General/Knapsack.h"
+#include "General/SequenceAlignment.h"
 
-int main(int argc, const char * argv[])
+void knapsackFunc()
 {
     Knapsack knapsack;
     std::ifstream fin("knapsack.in");
@@ -27,6 +29,30 @@ int main(int argc, const char * argv[])
     std::cout << val << std::endl;
 
     std::cin.get();
+}
+
+void sequenceAlignmentFunc()
+{
+    SequenceAlignment sequenceAlignment;
+    std::ifstream fin("sequence_alignment.in");
+    if (!sequenceAlignment.read(fin))
+    {
+        std::cout << "Cannot read SequenceAlignment" << std::endl;
+        exit(2);
+    }
+    uint32_t nwScore = 0;
+    std::string sequnces[2];
+    sequenceAlignment.run(nwScore, sequnces);
+    std::cout << nwScore << std::endl;
+    std::cout << sequnces[0] << std::endl;
+    std::cout << sequnces[1] << std::endl;
+
+    std::cin.get();
+}
+
+int main(int argc, const char * argv[])
+{
+    sequenceAlignmentFunc();
 #if 0
     // insert code here...
     std::cout << "Creating graph.\n";

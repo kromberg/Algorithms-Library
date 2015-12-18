@@ -117,10 +117,12 @@
   <ItemGroup>
     <ClInclude Include="Knapsack.h" />
     <ClInclude Include="MaxWIS.h" />
+    <ClInclude Include="SequenceAlignment.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Knapsack.cpp" />
     <ClCompile Include="MaxWIS.cpp" />
+    <ClCompile Include="SequenceAlignment.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
