@@ -32,5 +32,8 @@
     <None Include="sequence_alignment.in">
       <Filter>Input Files</Filter>
     </None>
+    <None Include="optimal_bst.in">
+      <Filter>Input Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

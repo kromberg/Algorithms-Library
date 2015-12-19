@@ -7,7 +7,7 @@ Matrix<T>::Matrix():
 }
 
 template<typename T>
-Matrix<T>::Matrix(uint64_t rowsCount, uint64_t colsCount) throw (std::bad_alloc) :
+Matrix<T>::Matrix(uint64_t rowsCount, uint64_t colsCount) :
     m_rowsCount(rowsCount),
     m_colsCount(colsCount),
     m_matrix()
@@ -16,7 +16,7 @@ Matrix<T>::Matrix(uint64_t rowsCount, uint64_t colsCount) throw (std::bad_alloc)
 }
 
 template<typename T>
-Matrix<T>::Matrix(const Matrix<T>& matrix) throw (std::bad_alloc) :
+Matrix<T>::Matrix(const Matrix<T>& matrix) :
     m_rowsCount(matrix.m_rowsCount),
     m_colsCount(matrix.m_colsCount),
     m_matrix()
@@ -56,7 +56,7 @@ void Matrix<T>::reset()
 }
 
 template<typename T>
-void Matrix<T>::resize(uint64_t rowsCount, uint64_t colsCount) throw (std::bad_alloc)
+void Matrix<T>::resize(uint64_t rowsCount, uint64_t colsCount)
 {
     std::unique_ptr<ValueType> matrix(new ValueType[rowsCount * colsCount]);
     uint64_t minColsCount = std::min(m_colsCount, colsCount);
@@ -69,4 +69,22 @@ void Matrix<T>::resize(uint64_t rowsCount, uint64_t colsCount) throw (std::bad_a
     m_rowsCount = rowsCount;
     m_colsCount = colsCount;
     m_matrix = std::move(matrix);
+}
+
+template <typename U>
+std::ostream& operator << (std::ostream& out, Matrix<U>& matrix)
+{
+    for (uint64_t i = 0; i < matrix.m_rowsCount; ++i)
+    {
+        for (uint64_t j = 0; j < matrix.m_colsCount; ++j)
+        {
+            if (j != 0)
+            {
+                out << ' ';
+            }
+            out << matrix[i][j];
+        }
+        out << std::endl;
+    }
+    return out;
 }

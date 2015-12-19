@@ -14,6 +14,7 @@
 #include "graphs/GraphMatrix.h"
 #include "General/Knapsack.h"
 #include "General/SequenceAlignment.h"
+#include "General/OptimalBST.h"
 
 void knapsackFunc()
 {
@@ -50,9 +51,27 @@ void sequenceAlignmentFunc()
     std::cin.get();
 }
 
+void optimalBSTFunc()
+{
+    OptimalBST optimalBST;
+    std::ifstream fin("optimal_bst.in");
+    if (!optimalBST.read(fin))
+    {
+        std::cout << "Cannot read OptimalBST" << std::endl;
+        exit(2);
+    }
+    double val = 0;
+    optimalBST.run(val);
+    std::cout << "Value : " << val << std::endl;
+    optimalBST.write(std::cout);
+
+    std::cin.get();
+}
+
+
 int main(int argc, const char * argv[])
 {
-    sequenceAlignmentFunc();
+    optimalBSTFunc();
 #if 0
     // insert code here...
     std::cout << "Creating graph.\n";

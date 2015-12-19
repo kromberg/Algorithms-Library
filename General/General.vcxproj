@@ -118,6 +118,7 @@
     <ClInclude Include="Knapsack.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="MaxWIS.h" />
+    <ClInclude Include="OptimalBST.h" />
     <ClInclude Include="SequenceAlignment.h" />
   </ItemGroup>
   <ItemGroup>
@@ -126,6 +127,7 @@
       <FileType>CppCode</FileType>
     </ClInclude>
     <ClCompile Include="MaxWIS.cpp" />
+    <ClCompile Include="OptimalBST.cpp" />
     <ClCompile Include="SequenceAlignment.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

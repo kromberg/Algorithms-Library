@@ -19,18 +19,21 @@ private:
 
 public:
     Matrix();
-    Matrix(uint64_t rowsCount, uint64_t colsCount) throw (std::bad_alloc);
-    Matrix(const Matrix<ValueType>& matrix) throw (std::bad_alloc);
+    Matrix(uint64_t rowsCount, uint64_t colsCount);
+    Matrix(const Matrix<ValueType>& matrix);
     Matrix(Matrix<ValueType>&& matrix);
     ~Matrix();
     
     ValueType* operator[] (uint64_t i);
 
     void reset();
-    void resize(uint64_t rowsCount, uint64_t colsCount) throw (std::bad_alloc);
+    void resize(uint64_t rowsCount, uint64_t colsCount);
 
     const uint64_t getRowsCount() const;
     const uint64_t getColsCount() const;
+
+    template <typename U>
+    friend std::ostream& operator << (std::ostream& out, Matrix<U>& matrix);
 };
 
 template<typename T>

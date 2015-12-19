@@ -59,11 +59,11 @@ bool SequenceAlignment::run(
     Matrix<uint32_t> nwScore(size[0], size[1]);
     for (uint64_t i = 0; i < size[0]; ++i)
     {
-        nwScore[i][0] = (i + 1) * m_gapScore;
+        nwScore[i][0] = static_cast<uint32_t>((i + 1) * m_gapScore);
     }
     for (uint64_t i = 0; i < size[1]; ++i)
     {
-        nwScore[0][i] = (i + 1) * m_gapScore;
+        nwScore[0][i] = static_cast<uint32_t>((i + 1) * m_gapScore);
     }
 
     uint32_t tmpScore[3];
