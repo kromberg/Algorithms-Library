@@ -8,10 +8,11 @@
 
 #include <stdio.h>
 #include <list>
+#include <iostream>
 
 #include "GraphMatrix.h"
 
-GraphMatrix::Utils::Dijkstra::End::End(const uint32_t end, const int32_t score) :
+GraphMatrix::Utils::Dijkstra::End::End(const uint32_t end, const double score) :
     m_end(end),
     m_score(score)
 {}
@@ -29,7 +30,20 @@ GraphMatrix::Utils::Dijkstra::End::End(End&& e)
     e.m_score = 0;
 }
 
-GraphMatrix::Utils::Prim::Edge::Edge(const uint32_t begin, const uint32_t end, const int32_t cost) :
+GraphMatrix::Utils::Dijkstra::End& GraphMatrix::Utils::Dijkstra::End::operator=(End&& e)
+{
+    if (this == &e)
+    {
+        return *this;
+    }
+    m_end = e.m_end;
+    m_score = e.m_score;
+    e.m_end = 0;
+    e.m_score = 0;
+    return *this;
+}
+
+GraphMatrix::Utils::Prim::Edge::Edge(const uint32_t begin, const uint32_t end, const double cost) :
     m_begin(begin),
     m_end(end),
     m_cost(cost)
@@ -51,6 +65,21 @@ GraphMatrix::Utils::Prim::Edge::Edge(Edge&& e)
     e.m_cost = 0;
 }
 
+GraphMatrix::Utils::Prim::Edge& GraphMatrix::Utils::Prim::Edge::operator=(Edge&& e)
+{
+    if (this == &e)
+    {
+        return *this;
+    }
+    m_begin = e.m_begin;
+    m_end = e.m_end;
+    m_cost = e.m_cost;
+    e.m_begin = 0;
+    e.m_end = 0;
+    e.m_cost = 0;
+    return *this;
+}
+
 GraphMatrix::Utils::Prim::VertexCost::VertexCost():
     m_set(false),
     m_explored(false),
@@ -58,7 +87,7 @@ GraphMatrix::Utils::Prim::VertexCost::VertexCost():
     m_cost(0)
 {}
 
-GraphMatrix::Utils::Prim::VertexCost::VertexCost(const uint32_t begin, const int32_t cost):
+GraphMatrix::Utils::Prim::VertexCost::VertexCost(const uint32_t begin, const double cost):
     m_set(true),
     m_explored(false),
     m_begin(begin),
@@ -75,6 +104,101 @@ GraphMatrix::Utils::Prim::VertexCost::VertexCost(VertexCost&& v)
     v.m_explored = false;
     v.m_begin = 0;
     v.m_cost = 0;
+}
+
+GraphMatrix::Utils::Prim::VertexCost& GraphMatrix::Utils::Prim::VertexCost::operator=(VertexCost&& v)
+{
+    if (this == &v)
+    {
+        return *this;
+    }
+    m_set = v.m_set;
+    m_explored = v.m_explored;
+    m_begin = v.m_begin;
+    m_cost = v.m_cost;
+    v.m_set = false;
+    v.m_explored = false;
+    v.m_begin = 0;
+    v.m_cost = 0;
+    return *this;
+}
+
+GraphMatrix::Utils::BellmanFord::MinEntity::MinEntity() :
+    m_length(0),
+    m_infinity(true),
+    m_path(nullptr),
+    m_vertex(0)
+{}
+
+GraphMatrix::Utils::BellmanFord::MatrixEntity::MatrixEntity() :
+    m_infinity(true),
+    m_path()
+{}
+
+GraphMatrix::Utils::BellmanFord::MatrixEntity::~MatrixEntity()
+{
+    m_path.m_vertices.clear();
+}
+
+std::ostream& operator << (std::ostream& out, const GraphMatrix::Utils::BellmanFord::MatrixEntity& matrixEntity)
+{
+    out << "[" << (matrixEntity.m_infinity ? "Infinity" : "Not infinity") << " : " << matrixEntity.m_path.m_length << "]";
+    return out;
+}
+
+GraphMatrix::Path::Path() :
+    m_length(0),
+    m_vertices()
+{}
+
+GraphMatrix::Path::Path(const Path& path)
+{
+    m_length = path.m_length;
+    m_vertices = path.m_vertices;
+}
+
+GraphMatrix::Path::Path(Path&& path)
+{
+    m_length = path.m_length;
+    m_vertices = std::move(path.m_vertices);
+    path.m_length = 0;
+}
+
+GraphMatrix::Path& GraphMatrix::Path::operator=(Path&& path)
+{
+    if (this == &path)
+    {
+        return *this;
+    }
+    m_length = path.m_length;
+    m_vertices = std::move(path.m_vertices);
+    path.m_length = 0;
+    return *this;
+}
+
+std::ostream& operator << (std::ostream& out, const GraphMatrix::Path& path)
+{
+    out << "Length: " << path.m_length << '\t' << "Path: ";
+    bool first = true;
+    uint32_t prev = 0;
+    for (auto v : path.m_vertices)
+    {
+        if (!first)
+        {
+            if (v != prev)
+            {
+                out << " -> ";
+                out << v + 1;
+            }
+        }
+        else
+        {
+            out << v + 1;
+            first = false;
+        }
+        prev = v;
+    }
+    return out;
 }
 
 GraphMatrix::GraphMatrix():
@@ -109,7 +233,7 @@ bool GraphMatrix::read(std::istream& in)
         // directed? begin end cost
         bool directed = false;
         uint32_t begin = 0, end = 0;
-        int32_t cost = 0;
+        double cost = 0;
         in >> directed >> begin >> end >> cost;
         --begin;
         --end;
@@ -160,7 +284,7 @@ bool GraphMatrix::write(std::ostream& out)
     return true;
 }
 
-bool GraphMatrix::Dijkstra(uint32_t startingVertex, uint32_t endVertex, int32_t& length)
+bool GraphMatrix::Dijkstra(uint32_t startingVertex, uint32_t endVertex, double& length)
 {
     if (startingVertex < 1 || endVertex < 1 ||
         startingVertex > m_numVertices || endVertex > m_numVertices)
@@ -273,7 +397,7 @@ bool GraphMatrix::MSTPrimStraightforward(GraphMatrix &mst)
         struct
         {
             bool m_set;
-            int32_t m_val;
+            double m_val;
             uint32_t m_begin;
             uint32_t m_end;
         } min{false, 0, 0, 0};
@@ -384,6 +508,82 @@ bool GraphMatrix::MSTPrim(GraphMatrix &mst)
     if (numExploredVertices != m_numVertices)
     {
         return false;
+    }
+
+    return true;
+}
+
+bool GraphMatrix::BellmandFord(uint32_t sourceVertex, std::vector<Path>& paths)
+{
+    if ((sourceVertex < 1) ||
+        (sourceVertex > m_numVertices))
+    {
+        return false;
+    }
+    --sourceVertex;
+
+    Matrix<Utils::BellmanFord::MatrixEntity> matrix(m_numEdges + 1, m_numVertices);
+    matrix[0][sourceVertex].m_infinity = false;
+    matrix[0][sourceVertex].m_path.m_length = 0;
+
+    Utils::BellmanFord::MinEntity minEntity;
+    for (uint32_t i = 1; i < m_numEdges + 1; ++i)
+    {
+        for (uint32_t v = 0; v < m_numVertices; ++v)
+        {
+            for (uint32_t w = 0; w < m_numVertices; ++w)
+            {
+                if (m_matrix[w][v].m_set && !matrix[i - 1][w].m_infinity)
+                {
+                    if ((minEntity.m_infinity) || 
+                        (matrix[i - 1][w].m_path.m_length + m_matrix[w][v].m_cost < minEntity.m_length))
+                    {
+                        minEntity.m_infinity = false;
+                        minEntity.m_length = matrix[i - 1][w].m_path.m_length + m_matrix[w][v].m_cost;
+                        minEntity.m_path = &matrix[i - 1][w].m_path;
+                        minEntity.m_vertex = w;
+                    }
+                }
+            }
+            if (!matrix[i - 1][v].m_infinity)
+            {
+                if ((minEntity.m_infinity) ||
+                    (matrix[i - 1][v].m_path.m_length < minEntity.m_length))
+                {
+                    minEntity.m_infinity = false;
+                    minEntity.m_length = matrix[i - 1][v].m_path.m_length;
+                    minEntity.m_path = &matrix[i - 1][v].m_path;
+                    minEntity.m_vertex = v;
+                }
+            }
+            // copy
+            matrix[i][v].m_infinity = minEntity.m_infinity;
+            if (minEntity.m_path)
+            {
+                matrix[i][v].m_path = *minEntity.m_path;
+                matrix[i][v].m_path.m_vertices.push_back(minEntity.m_vertex);
+                minEntity.m_path = nullptr;
+                minEntity.m_vertex = 0;
+            }
+            matrix[i][v].m_path.m_length = minEntity.m_length;
+            minEntity.m_infinity = true;
+            minEntity.m_length = 0;
+        }
+    }
+    
+    for (uint32_t v = 0; v < m_numVertices; ++v)
+    {
+        if (matrix[m_numEdges][v].m_path.m_length < matrix[m_numEdges - 1][v].m_path.m_length)
+        {
+            // negative cycle was detected
+            return false;
+        }
+    }
+
+    for (uint32_t v = 0; v < m_numVertices; ++v)
+    {
+        matrix[m_numEdges - 1][v].m_path.m_vertices.push_back(v);
+        paths.push_back(std::move(matrix[m_numEdges - 1][v].m_path));
     }
 
     return true;

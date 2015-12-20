@@ -68,10 +68,33 @@ void optimalBSTFunc()
     std::cin.get();
 }
 
+void BellmandFordFunc()
+{
+    // insert code here...
+    std::ifstream fin("graph.in");
+
+    GraphMatrix graphMatrix;
+    if (!graphMatrix.read(fin))
+    {
+        std::cout << "Cannot read graph from file" << std::endl;
+        exit(2);
+    }
+
+    graphMatrix.write(std::cout);
+
+    std::vector<GraphMatrix::Path> paths;
+    graphMatrix.BellmandFord(2, paths);
+    for (auto& path : paths)
+    {
+        std::cout << path << std::endl;
+    }
+
+    std::cin.get();
+}
 
 int main(int argc, const char * argv[])
 {
-    optimalBSTFunc();
+    BellmandFordFunc();
 #if 0
     // insert code here...
     std::cout << "Creating graph.\n";
@@ -90,7 +113,7 @@ int main(int argc, const char * argv[])
     mst.write(foutMst1);
 #endif
 #if 0
-    int32_t length = 0;
+    double length = 0;
     graphMatrix.Dijkstra(1, 5, length);
     std::ofstream foutDijkstra1("graph.dijkstra1.out");
     graphMatrix.write(foutDijkstra1);

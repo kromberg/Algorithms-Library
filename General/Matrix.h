@@ -15,7 +15,7 @@ private:
     uint64_t m_rowsCount;
     uint64_t m_colsCount;
 
-    std::unique_ptr<ValueType> m_matrix;
+    std::unique_ptr<ValueType[]> m_matrix;
 
 public:
     Matrix();

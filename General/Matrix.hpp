@@ -58,7 +58,7 @@ void Matrix<T>::reset()
 template<typename T>
 void Matrix<T>::resize(uint64_t rowsCount, uint64_t colsCount)
 {
-    std::unique_ptr<ValueType> matrix(new ValueType[rowsCount * colsCount]);
+    std::unique_ptr<ValueType[]> matrix(new ValueType[rowsCount * colsCount]);
     uint64_t minColsCount = std::min(m_colsCount, colsCount);
     uint64_t minRowsCount = std::min(m_rowsCount, rowsCount);
     for (uint64_t i = 0; i < minRowsCount; ++i)
