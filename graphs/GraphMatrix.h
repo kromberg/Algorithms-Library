@@ -15,6 +15,8 @@
 #include <fstream>
 #include <cstdint>
 
+#include "General/Matrix.h"
+
 class GraphMatrix
 {
 private:
@@ -38,7 +40,7 @@ private:
     // rows    - out vertex
     // columns - in vertex
 
-    std::vector<Edge> m_matrix;
+    Matrix<Edge> m_matrix;
     bool m_directed;
     struct Score
     {

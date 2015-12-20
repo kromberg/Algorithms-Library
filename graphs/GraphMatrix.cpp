@@ -90,7 +90,7 @@ GraphMatrix::~GraphMatrix()
 
 void GraphMatrix::clear()
 {
-    m_matrix.clear();
+    m_matrix.reset();
     m_numEdges = 0;
     m_numVertices = 0;
     m_directed = false;
@@ -101,7 +101,7 @@ bool GraphMatrix::read(std::istream& in)
     clear();
 
     in >> m_numVertices >> m_numEdges;
-    m_matrix.resize(m_numVertices * m_numVertices);
+    m_matrix.resize(m_numVertices, m_numVertices);
 
     for (uint32_t i = 0; i < m_numEdges; ++i)
     {
@@ -114,12 +114,12 @@ bool GraphMatrix::read(std::istream& in)
         --begin;
         --end;
 
-        m_matrix[begin * m_numVertices + end].m_set = true;
-        m_matrix[begin * m_numVertices + end].m_cost = cost;
+        m_matrix[begin][end].m_set = true;
+        m_matrix[begin][end].m_cost = cost;
         if (!directed)
         {
-            m_matrix[end * m_numVertices + begin].m_set = true;
-            m_matrix[end * m_numVertices + begin].m_cost = cost;
+            m_matrix[end][begin].m_set = true;
+            m_matrix[end][begin].m_cost = cost;
         }
         else
         {
@@ -138,9 +138,9 @@ bool GraphMatrix::write(std::ostream& out)
     {
         for (uint32_t j = 0; j < m_numVertices; ++j)
         {
-            if (m_matrix[i * m_numVertices + j].m_set)
+            if (m_matrix[i][j].m_set)
             {
-                out << m_matrix[i * m_numVertices + j].m_cost << ' ';
+                out << m_matrix[i][j].m_cost << ' ';
             }
             else
             {
@@ -185,7 +185,7 @@ bool GraphMatrix::Dijkstra(uint32_t startingVertex, uint32_t endVertex, int32_t&
     
     for (uint32_t i = 0; i < m_numVertices; ++i)
     {
-        Edge& e = m_matrix[currVertex * m_numVertices + i];
+        Edge& e = m_matrix[currVertex][i];
         if (e.m_set)
         {
             m_scores[i].m_set = true;
@@ -214,7 +214,7 @@ bool GraphMatrix::Dijkstra(uint32_t startingVertex, uint32_t endVertex, int32_t&
 
         for (uint32_t i = 0; i < m_numVertices; ++i)
         {
-            Edge& e = m_matrix[currVertex * m_numVertices + i];
+            Edge& e = m_matrix[currVertex][i];
             if (e.m_set &&
                 !m_scores[i].m_explored)
             {
@@ -261,7 +261,7 @@ bool GraphMatrix::MSTPrimStraightforward(GraphMatrix &mst)
     mst.clear();
     // set mst initial values
     mst.m_numVertices = m_numVertices;
-    mst.m_matrix.resize(m_matrix.size());
+    mst.m_matrix.resize(m_matrix.getRowsCount(), m_matrix.getColsCount());
 
     std::list<uint32_t> vertices;
     vertices.push_back(0);
@@ -281,14 +281,14 @@ bool GraphMatrix::MSTPrimStraightforward(GraphMatrix &mst)
         {
             for (uint32_t i = 0; i < m_numVertices; ++i)
             {
-                if (m_matrix[v * m_numVertices + i].m_set && // real edge
+                if (m_matrix[v][i].m_set && // real edge
                     (!m_scores[i].m_explored) && // end explored?
                     (!min.m_set || // min set?
-                     min.m_val > m_matrix[v * m_numVertices + i].m_cost)) // min condition
+                     min.m_val > m_matrix[v][i].m_cost)) // min condition
                 {
                     // set new minimum
                     min.m_set = true;
-                    min.m_val = m_matrix[v * m_numVertices + i].m_cost;
+                    min.m_val = m_matrix[v][i].m_cost;
                     min.m_begin = v;
                     min.m_end = i;
                 }
@@ -298,8 +298,8 @@ bool GraphMatrix::MSTPrimStraightforward(GraphMatrix &mst)
         m_scores[min.m_end].m_explored = true;
         // add edge
         ++ mst.m_numEdges;
-        mst.m_matrix[min.m_begin * m_numVertices + min.m_end].m_set = mst.m_matrix[min.m_end * m_numVertices + min.m_begin].m_set = true;
-        mst.m_matrix[min.m_begin * m_numVertices + min.m_end].m_cost = mst.m_matrix[min.m_end * m_numVertices + min.m_begin].m_cost = min.m_val;
+        mst.m_matrix[min.m_begin][min.m_end].m_set = mst.m_matrix[min.m_end][min.m_begin].m_set = true;
+        mst.m_matrix[min.m_begin][min.m_end].m_cost = mst.m_matrix[min.m_end][min.m_begin].m_cost = min.m_val;
     } 
 
     return true;
@@ -316,7 +316,7 @@ bool GraphMatrix::MSTPrim(GraphMatrix &mst)
     mst.clear();
 
     mst.m_numVertices = m_numVertices;
-    mst.m_matrix.resize(mst.m_numVertices * mst.m_numVertices);
+    mst.m_matrix.resize(mst.m_numVertices, mst.m_numVertices);
 
     std::vector<Utils::Prim::VertexCost> verticesCosts(m_numVertices);
     Utils::Prim::EdgesMultiset edgesMultiset(Utils::Prim::edgesCostsComp);
@@ -343,7 +343,7 @@ bool GraphMatrix::MSTPrim(GraphMatrix &mst)
 
         for (uint32_t i = 0; i < m_numVertices; ++i)
         {
-            Edge& e = m_matrix[currVertex * m_numVertices + i];
+            Edge& e = m_matrix[currVertex][i];
             if (e.m_set &&
                 !verticesCosts[i].m_explored)
             {
@@ -371,11 +371,11 @@ bool GraphMatrix::MSTPrim(GraphMatrix &mst)
         currVertex = edgesMultiset.begin()->m_end;
         edgesMultiset.erase(edgesMultiset.begin());
         verticesCosts[currVertex].m_explored = true;
-        mst.m_matrix[currVertex * m_numVertices + verticesCosts[currVertex].m_begin].m_set =
-            mst.m_matrix[verticesCosts[currVertex].m_begin * m_numVertices + currVertex].m_set =
+        mst.m_matrix[currVertex][verticesCosts[currVertex].m_begin].m_set =
+            mst.m_matrix[verticesCosts[currVertex].m_begin][currVertex].m_set =
                 true;
-        mst.m_matrix[currVertex * m_numVertices + verticesCosts[currVertex].m_begin].m_cost =
-            mst.m_matrix[verticesCosts[currVertex].m_begin * m_numVertices + currVertex].m_cost =
+        mst.m_matrix[currVertex][verticesCosts[currVertex].m_begin].m_cost =
+            mst.m_matrix[verticesCosts[currVertex].m_begin][currVertex].m_cost =
                 verticesCosts[currVertex].m_cost;
         ++mst.m_numEdges;
         ++numExploredVertices;

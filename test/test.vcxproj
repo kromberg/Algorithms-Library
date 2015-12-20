@@ -122,11 +122,11 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Graph\Graph\graphs\graphs.vcxproj">
-      <Project>{daa88e68-7c4a-4aad-837d-dd74da8d58a8}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\General\General.vcxproj">
       <Project>{296732d6-dafc-4dab-a65d-1468a50e3e8d}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\graphs\graphs.vcxproj">
+      <Project>{daa88e68-7c4a-4aad-837d-dd74da8d58a8}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
