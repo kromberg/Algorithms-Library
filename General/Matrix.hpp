@@ -71,6 +71,16 @@ void Matrix<T>::resize(uint64_t rowsCount, uint64_t colsCount)
     m_matrix = std::move(matrix);
 }
 
+template<typename T>
+void Matrix<T>::fill(ValueType val)
+{
+    uint64_t numElements = m_rowsCount * m_colsCount;
+    for (uint64_t i = 0; i < numElements; ++i)
+    {
+        m_matrix[i] = val;
+    }
+}
+
 template <typename U>
 std::ostream& operator << (std::ostream& out, Matrix<U>& matrix)
 {

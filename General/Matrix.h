@@ -28,6 +28,7 @@ public:
 
     void reset();
     void resize(uint64_t rowsCount, uint64_t colsCount);
+    void fill(ValueType val);
 
     const uint64_t getRowsCount() const;
     const uint64_t getColsCount() const;

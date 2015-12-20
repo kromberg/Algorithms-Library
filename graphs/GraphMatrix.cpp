@@ -135,14 +135,31 @@ GraphMatrix::Utils::BellmanFord::MatrixEntity::MatrixEntity() :
     m_path()
 {}
 
-GraphMatrix::Utils::BellmanFord::MatrixEntity::~MatrixEntity()
-{
-    m_path.m_vertices.clear();
-}
-
 std::ostream& operator << (std::ostream& out, const GraphMatrix::Utils::BellmanFord::MatrixEntity& matrixEntity)
 {
     out << "[" << (matrixEntity.m_infinity ? "Infinity" : "Not infinity") << " : " << matrixEntity.m_path.m_length << "]";
+    return out;
+}
+
+GraphMatrix::Utils::FloydWarshall::MatrixEntity::MatrixEntity() :
+    m_infinity(true),
+    m_length(0)
+{}
+
+std::ostream& operator << (std::ostream& out, const GraphMatrix::Utils::FloydWarshall::MatrixEntity& matrixEntity)
+{
+    out << "[" << (matrixEntity.m_infinity ? "Infinity" : "Not infinity") << " : " << matrixEntity.m_length << "]";
+    return out;
+}
+
+GraphMatrix::LengthResult::LengthResult():
+    m_infinity(true),
+    m_length(0)
+{}
+
+std::ostream& operator << (std::ostream& out, const GraphMatrix::LengthResult& lengthResult)
+{
+    out << "[" << (lengthResult.m_infinity ? "Infinity" : "Not infinity") << " : " << lengthResult.m_length << "]";
     return out;
 }
 
@@ -521,7 +538,7 @@ bool GraphMatrix::BellmandFord(uint32_t sourceVertex, std::vector<Path>& paths)
         return false;
     }
     --sourceVertex;
-
+    // TODO: optimiaze memory. we just need [2 x m_numVerticies] matrix
     Matrix<Utils::BellmanFord::MatrixEntity> matrix(m_numEdges + 1, m_numVertices);
     matrix[0][sourceVertex].m_infinity = false;
     matrix[0][sourceVertex].m_path.m_length = 0;
@@ -585,6 +602,91 @@ bool GraphMatrix::BellmandFord(uint32_t sourceVertex, std::vector<Path>& paths)
         matrix[m_numEdges - 1][v].m_path.m_vertices.push_back(v);
         paths.push_back(std::move(matrix[m_numEdges - 1][v].m_path));
     }
+
+    return true;
+}
+
+bool GraphMatrix::FloydWarshall(Matrix<LengthResult>& length, Matrix<int64_t>& path)
+{
+    // TODO: size [2 x m_numVetices x m_numVetices] is enough
+    std::vector<Matrix<Utils::FloydWarshall::MatrixEntity> > matrixLayers;
+    matrixLayers.resize(m_numVertices);
+
+    path.resize(m_numVertices, m_numVertices);
+    path.fill(-1);
+
+    for (auto& matrix : matrixLayers)
+    {
+        matrix.resize(m_numVertices, m_numVertices);
+    }
+
+    for (uint32_t i = 0; i < m_numVertices; ++i)
+    {
+        for (uint32_t j = 0; j < m_numVertices; ++j)
+        {
+            if (i == j)
+            {
+                matrixLayers[0][i][j].m_infinity = false;
+                matrixLayers[0][i][j].m_length = 0;
+            }
+            else if (m_matrix[i][j].m_set)
+            {
+                matrixLayers[0][i][j].m_infinity = false;
+                matrixLayers[0][i][j].m_length = m_matrix[i][j].m_cost;
+                path[i][j] = j;
+            }
+        }
+    }
+    /* debug
+    std::cout << "##############################################################" << std::endl;
+    std::cout << matrixLayers[0] << std::endl;
+    */
+
+    Utils::FloydWarshall::MatrixEntity minEntity;
+    for (uint32_t k = 1; k < m_numVertices; ++k)
+    {
+        for (uint32_t i = 0; i < m_numVertices; ++i)
+        {
+            for (uint32_t j = 0; j < m_numVertices; ++j)
+            {
+                minEntity.m_infinity = matrixLayers[k - 1][i][j].m_infinity;
+                minEntity.m_length = matrixLayers[k - 1][i][j].m_length;
+
+                if (!matrixLayers[k - 1][i][k].m_infinity &&
+                    !matrixLayers[k - 1][k][j].m_infinity)
+                {
+                    if (minEntity.m_infinity ||
+                        (minEntity.m_length > matrixLayers[k - 1][i][k].m_length + !matrixLayers[k - 1][k][j].m_length))
+                    {
+                        minEntity.m_infinity = false;
+                        minEntity.m_length = matrixLayers[k - 1][i][k].m_length + matrixLayers[k - 1][k][j].m_length;
+                        path[i][j] = k;
+                    }
+                }
+                matrixLayers[k][i][j].m_infinity = minEntity.m_infinity;
+                matrixLayers[k][i][j].m_length = minEntity.m_length;
+
+                minEntity.m_infinity = true;
+                minEntity.m_length = 0;
+            }
+        }
+
+        /* debug
+        std::cout << "##############################################################" << std::endl;
+        std::cout << matrixLayers[k] << std::endl;
+        */
+    }
+
+    length.resize(m_numVertices, m_numVertices);
+    for (uint32_t i = 0; i < m_numVertices; ++i)
+    {
+        for (uint32_t j = 0; j < m_numVertices; ++j)
+        {
+            length[i][j].m_infinity = matrixLayers[m_numVertices - 1][i][j].m_infinity;
+            length[i][j].m_length = matrixLayers[m_numVertices - 1][i][j].m_length;
+        }
+    }
+
 
     return true;
 }

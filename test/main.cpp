@@ -92,9 +92,32 @@ void BellmandFordFunc()
     std::cin.get();
 }
 
+void FloydWarshallFunc()
+{
+    // insert code here...
+    std::ifstream fin("graph.in");
+
+    GraphMatrix graphMatrix;
+    if (!graphMatrix.read(fin))
+    {
+        std::cout << "Cannot read graph from file" << std::endl;
+        exit(2);
+    }
+
+    graphMatrix.write(std::cout);
+
+    Matrix<GraphMatrix::LengthResult> length;
+    Matrix<int64_t> path;
+    graphMatrix.FloydWarshall(length, path);
+    std::cout << length << std::endl;
+    std::cout << path << std::endl;
+
+    std::cin.get();
+}
+
 int main(int argc, const char * argv[])
 {
-    BellmandFordFunc();
+    FloydWarshallFunc();
 #if 0
     // insert code here...
     std::cout << "Creating graph.\n";

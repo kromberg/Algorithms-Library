@@ -20,6 +20,14 @@
 class GraphMatrix
 {
 public:
+    struct LengthResult
+    {
+        double m_length;
+        bool m_infinity;
+        LengthResult();
+    };
+    friend std::ostream& operator << (std::ostream& out, const LengthResult& lengthResult);
+
     struct Path
     {
         double m_length;
@@ -85,6 +93,9 @@ public:
 
     // single source shortest path
     bool BellmandFord(uint32_t sourceVertex, std::vector<Path>& paths);
+
+    // all pairs shortest path
+    bool FloydWarshall(Matrix<LengthResult>& length, Matrix<int64_t>& path);
 };
 
 inline const bool GraphMatrix::isDirected() const
@@ -156,7 +167,18 @@ public:
             GraphMatrix::Path m_path;
             bool m_infinity;
             MatrixEntity();
-            ~MatrixEntity();
+        };
+        friend std::ostream& operator << (std::ostream& out, const MatrixEntity& matrixEntity);
+    };
+
+    class FloydWarshall
+    {
+    public:
+        struct MatrixEntity
+        {
+            double m_length;
+            bool m_infinity;
+            MatrixEntity();
         };
         friend std::ostream& operator << (std::ostream& out, const MatrixEntity& matrixEntity);
     };
