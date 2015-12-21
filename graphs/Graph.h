@@ -10,6 +10,7 @@
 #define GRAPH_H
 
 #include <list>
+#include <map>
 #include <vector>
 #include <set>
 #include <algorithm>
@@ -23,6 +24,7 @@ struct Edge;
 typedef std::list<Vertex*> VerticesList;
 typedef std::vector<Vertex*> VerticesVector;
 typedef std::list<Edge*> EdgesList;
+typedef std::map<uint32_t, Edge*> EdgesMap;
 
 struct EdgeScore
 {
@@ -43,7 +45,7 @@ struct EdgeScore
 
 struct Vertex
 {
-    EdgesList m_edgesList;
+    EdgesMap m_edgesList;
     uint32_t m_id;
     bool m_explored;
     
@@ -70,6 +72,7 @@ class Graph
 private:
     VerticesList m_vertices;
     EdgesList m_edges;
+    bool m_isDirected;
 
 public:
     Graph();
@@ -82,10 +85,13 @@ public:
     
     const VerticesList& getVertices() const;
     const EdgesList& getEdges() const;
+    const bool isDirected() const;
     
     bool BFS(Vertex* startingVertex);
     bool DFS(Vertex* startingVertex);
     bool Dijkstra(Vertex* startingVertex, Vertex* endVertex, int32_t& length);
+
+    bool doesVertexCoverExists(const uint32_t k);
 };
 
 inline const VerticesList& Graph::getVertices() const
@@ -96,6 +102,11 @@ inline const VerticesList& Graph::getVertices() const
 inline const EdgesList& Graph::getEdges() const
 {
     return m_edges;
+}
+
+inline const bool Graph::isDirected() const
+{
+    return m_isDirected;
 }
 
 #endif /* GRAPH_H */

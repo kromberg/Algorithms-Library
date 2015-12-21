@@ -6,12 +6,14 @@
 //  Copyright © 2015 Egor Kromberg. All rights reserved.
 //
 
+#include <random>
 #include <stdio.h>
 
 #include "Graph.h"
 
 
-Graph::Graph()
+Graph::Graph():
+    m_isDirected(false)
 {}
 
 Graph::~Graph()
@@ -34,6 +36,8 @@ void Graph::clear()
         m_edges.pop_front();
         delete edge;
     }
+
+    m_isDirected = false;
 }
 
 bool Graph::read(std::istream& in)
@@ -62,7 +66,7 @@ bool Graph::read(std::istream& in)
         Edge* edge = new Edge;
         edge->m_begin = verticesVector[begin - 1];
         edge->m_end = verticesVector[end - 1];
-        edge->m_begin->m_edgesList.push_back(edge);
+        edge->m_begin->m_edgesList.insert(std::make_pair(end - 1, edge));
         edge->m_cost = cost;
         m_edges.push_back(edge);
 
@@ -71,9 +75,13 @@ bool Graph::read(std::istream& in)
             Edge* reverseEdge = new Edge;
             reverseEdge->m_begin = verticesVector[end - 1];
             reverseEdge->m_end = verticesVector[begin - 1];
-            reverseEdge->m_begin->m_edgesList.push_back(reverseEdge);
+            reverseEdge->m_begin->m_edgesList.insert(std::make_pair(begin - 1, edge));
             reverseEdge->m_cost = cost;
             m_edges.push_back(reverseEdge);
+        }
+        else
+        {
+            m_isDirected = true;
         }
     }
     return true;
@@ -119,10 +127,10 @@ bool Graph::BFS(Vertex* startingVertex)
         
         for (auto& edge: currentVertex->m_edgesList)
         {
-            if (!edge->m_end->m_explored)
+            if (!edge.second->m_end->m_explored)
             {
-                edge->m_end->m_explored = true;
-                verticesQueue.push_back(edge->m_end);
+                edge.second->m_end->m_explored = true;
+                verticesQueue.push_back(edge.second->m_end);
             }
         }
     }
@@ -153,13 +161,115 @@ bool Graph::DFS(Vertex* startingVertex)
         
         for (auto& edge: currentVertex->m_edgesList)
         {
-            if (!edge->m_end->m_explored)
+            if (!edge.second->m_end->m_explored)
             {
-                edge->m_end->m_explored = true;
-                verticesQueue.push_back(edge->m_end);
+                edge.second->m_end->m_explored = true;
+                verticesQueue.push_back(edge.second->m_end);
             }
         }
     }
 
     return true;
+}
+
+bool Graph::doesVertexCoverExists(const uint32_t k)
+{
+    if (m_isDirected)
+    {
+        return false;
+    }
+
+    if (0 == k)
+    {
+        if (m_vertices.size() > 0)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+    // Seed with a real random value, if available
+    std::random_device rd;
+    // Choose a random mean between 0 and m_edges.size() - 1
+    std::default_random_engine e1(rd());
+    std::uniform_int_distribution<size_t> uniform_dist(0, m_edges.size() - 1);
+    size_t edgeIdx = uniform_dist(e1);
+    {
+        // copy Graph
+        Graph graph = *this;
+        EdgesList::iterator edgeIt = m_edges.begin();
+        std::advance(edgeIt, edgeIdx);
+        VerticesList::iterator vertextIt = m_vertices.begin();
+        std::advance(vertextIt, (*edgeIt)->m_begin);
+        // the first vertex
+        for (auto &edge : (*vertextIt)->m_edgesList)
+        {
+            edge.second->m_end->m_edgesList.erase((*vertextIt)->m_id);
+        }
+        m_vertices.erase(vertextIt);
+        EdgesList::iterator edgeIt2;
+        if (edgeIt == m_edges.begin())
+        {
+            edgeIt2 = edgeIt;
+            ++edgeIt2;
+        }
+        else
+        {
+            edgeIt2 = edgeIt;
+            --edgeIt2;
+            if ((*edgeIt2)->m_begin != (*edgeIt)->m_end ||
+                (*edgeIt2)->m_end != (*edgeIt)->m_begin)
+            {
+                edgeIt2 = edgeIt;
+                ++edgeIt2;
+            }
+        }
+        m_edges.erase(edgeIt);
+        m_edges.erase(edgeIt2);
+        if (graph.doesVertexCoverExists(k - 1))
+        {
+            return true;
+        }
+    }
+    {
+        // copy Graph
+        Graph graph = *this;
+        EdgesList::iterator edgeIt = m_edges.begin();
+        std::advance(edgeIt, edgeIdx);
+        VerticesList::iterator vertextIt = m_vertices.begin();
+        std::advance(vertextIt, (*edgeIt)->m_end);
+        // the second vertex
+        for (auto &edge : (*vertextIt)->m_edgesList)
+        {
+            edge.second->m_end->m_edgesList.erase((*vertextIt)->m_id);
+        }
+        m_vertices.erase(vertextIt);
+
+        EdgesList::iterator edgeIt2;
+        if (edgeIt == m_edges.begin())
+        {
+            edgeIt2 = edgeIt;
+            ++edgeIt2;
+        }
+        else
+        {
+            edgeIt2 = edgeIt;
+            --edgeIt2;
+            if ((*edgeIt2)->m_begin != (*edgeIt)->m_end ||
+                (*edgeIt2)->m_end != (*edgeIt)->m_begin)
+            {
+                edgeIt2 = edgeIt;
+                ++edgeIt2;
+            }
+        }
+        m_edges.erase(edgeIt);
+        m_edges.erase(edgeIt2);
+        if (graph.doesVertexCoverExists(k - 1))
+        {
+            return true;
+        }
+    }
+    return false;
 }
