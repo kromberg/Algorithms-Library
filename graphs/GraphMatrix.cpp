@@ -12,50 +12,19 @@
 
 #include "GraphMatrix.h"
 
-GraphMatrix::Utils::Dijkstra::End::End(const uint32_t end, const double score) :
-    m_end(end),
-    m_score(score)
-{}
-
-GraphMatrix::Utils::Dijkstra::End::End(const End& e):
-    m_end(e.m_end),
-    m_score(e.m_score)
-{}
-
-GraphMatrix::Utils::Dijkstra::End::End(End&& e)
-{
-    m_end = e.m_end;
-    m_score = e.m_score;
-    e.m_end = 0;
-    e.m_score = 0;
-}
-
-GraphMatrix::Utils::Dijkstra::End& GraphMatrix::Utils::Dijkstra::End::operator=(End&& e)
-{
-    if (this == &e)
-    {
-        return *this;
-    }
-    m_end = e.m_end;
-    m_score = e.m_score;
-    e.m_end = 0;
-    e.m_score = 0;
-    return *this;
-}
-
-GraphMatrix::Utils::Prim::Edge::Edge(const uint32_t begin, const uint32_t end, const double cost) :
+GraphMatrix::Utils::Edge::Edge(const uint32_t begin, const uint32_t end, const double cost) :
     m_begin(begin),
     m_end(end),
     m_cost(cost)
 {}
 
-GraphMatrix::Utils::Prim::Edge::Edge(const Edge& e):
+GraphMatrix::Utils::Edge::Edge(const Edge& e) :
     m_begin(e.m_begin),
     m_end(e.m_end),
     m_cost(e.m_cost)
 {}
 
-GraphMatrix::Utils::Prim::Edge::Edge(Edge&& e)
+GraphMatrix::Utils::Edge::Edge(Edge&& e)
 {
     m_begin = e.m_begin;
     m_end = e.m_end;
@@ -65,7 +34,7 @@ GraphMatrix::Utils::Prim::Edge::Edge(Edge&& e)
     e.m_cost = 0;
 }
 
-GraphMatrix::Utils::Prim::Edge& GraphMatrix::Utils::Prim::Edge::operator=(Edge&& e)
+GraphMatrix::Utils::Edge& GraphMatrix::Utils::Edge::operator=(Edge&& e)
 {
     if (this == &e)
     {
@@ -80,33 +49,34 @@ GraphMatrix::Utils::Prim::Edge& GraphMatrix::Utils::Prim::Edge::operator=(Edge&&
     return *this;
 }
 
-GraphMatrix::Utils::Prim::VertexCost::VertexCost():
+GraphMatrix::Utils::VertexCost::VertexCost():
     m_set(false),
     m_explored(false),
     m_begin(0),
-    m_cost(0)
+    m_path()
 {}
 
-GraphMatrix::Utils::Prim::VertexCost::VertexCost(const uint32_t begin, const double cost):
+GraphMatrix::Utils::VertexCost::VertexCost(const uint32_t begin, const double cost):
     m_set(true),
     m_explored(false),
     m_begin(begin),
-    m_cost(cost)
-{}
+    m_path()
+{
+    m_path.m_length = cost;
+}
 
-GraphMatrix::Utils::Prim::VertexCost::VertexCost(VertexCost&& v)
+GraphMatrix::Utils::VertexCost::VertexCost(VertexCost&& v)
 {
     m_set = v.m_set;
     m_explored = v.m_explored;
     m_begin = v.m_begin;
-    m_cost = v.m_cost;
+    m_path = std::move(v.m_path);
     v.m_set = false;
     v.m_explored = false;
     v.m_begin = 0;
-    v.m_cost = 0;
 }
 
-GraphMatrix::Utils::Prim::VertexCost& GraphMatrix::Utils::Prim::VertexCost::operator=(VertexCost&& v)
+GraphMatrix::Utils::VertexCost& GraphMatrix::Utils::VertexCost::operator=(VertexCost&& v)
 {
     if (this == &v)
     {
@@ -115,11 +85,10 @@ GraphMatrix::Utils::Prim::VertexCost& GraphMatrix::Utils::Prim::VertexCost::oper
     m_set = v.m_set;
     m_explored = v.m_explored;
     m_begin = v.m_begin;
-    m_cost = v.m_cost;
+    m_path = std::move(v.m_path);
     v.m_set = false;
     v.m_explored = false;
     v.m_begin = 0;
-    v.m_cost = 0;
     return *this;
 }
 
@@ -195,7 +164,7 @@ GraphMatrix::Path& GraphMatrix::Path::operator=(Path&& path)
 
 std::ostream& operator << (std::ostream& out, const GraphMatrix::Path& path)
 {
-    out << "Length: " << path.m_length << '\t' << "Path: ";
+    out << "[Length: " << path.m_length << "; Path: ";
     bool first = true;
     uint32_t prev = 0;
     for (auto v : path.m_vertices)
@@ -215,8 +184,14 @@ std::ostream& operator << (std::ostream& out, const GraphMatrix::Path& path)
         }
         prev = v;
     }
+    out << "]";
     return out;
 }
+
+GraphMatrix::Edge::Edge() :
+    m_set(false),
+    m_cost(0)
+{}
 
 GraphMatrix::GraphMatrix():
     m_numVertices(0),
@@ -290,13 +265,6 @@ bool GraphMatrix::write(std::ostream& out)
         }
         out << std::endl;
     }
-    out << "Scores: "  << std::endl;
-    for (auto& score : m_scores)
-    {
-        out << (score.m_explored ? "[explored]" : "[not explored]") <<
-            (score.m_set ? "[set]:" : "[not set]:") <<
-            score.m_value << std::endl;
-    }
 
     return true;
 }
@@ -317,35 +285,22 @@ bool GraphMatrix::Dijkstra(uint32_t startingVertex, uint32_t endVertex, double& 
         return true;
     }
 
-    m_scores = std::move(std::vector<Score>(m_numVertices));
-    Utils::Dijkstra::EndsMultiset endsMultiset(Utils::Dijkstra::endsScoresComp);
+    std::vector<Utils::VertexCost> scores(m_numVertices);
+    Utils::EdgesMultiset edgesMultiset(Utils::edgesCostsComp);
 
     uint32_t currVertex = startingVertex;
-    m_scores[currVertex].m_explored = true;
-    m_scores[currVertex].m_set = true;
-    
-    for (uint32_t i = 0; i < m_numVertices; ++i)
-    {
-        Edge& e = m_matrix[currVertex][i];
-        if (e.m_set)
-        {
-            m_scores[i].m_set = true;
-            m_scores[i].m_value = e.m_cost;
-            endsMultiset.insert(Utils::Dijkstra::End(i, e.m_cost));
-        }
-    }
-
-    currVertex = endsMultiset.begin()->m_end;
-    endsMultiset.erase(endsMultiset.begin());
-    m_scores[currVertex].m_explored = true;
+    scores[currVertex].m_explored = true;
+    scores[currVertex].m_set = true;
+    scores[currVertex].m_path.m_vertices.push_back(currVertex);
+    scores[currVertex].m_path.m_length = 0;
 
     while (currVertex != endVertex)
     {
-        for (auto crossingEdgeIt = endsMultiset.begin(); crossingEdgeIt != endsMultiset.end();)
+        for (auto crossingEdgeIt = edgesMultiset.begin(); crossingEdgeIt != edgesMultiset.end();)
         {
-            if (m_scores[crossingEdgeIt->m_end].m_explored)
+            if (scores[crossingEdgeIt->m_end].m_explored)
             {
-                endsMultiset.erase(crossingEdgeIt++);
+                edgesMultiset.erase(crossingEdgeIt++);
             }
             else
             {
@@ -357,35 +312,135 @@ bool GraphMatrix::Dijkstra(uint32_t startingVertex, uint32_t endVertex, double& 
         {
             Edge& e = m_matrix[currVertex][i];
             if (e.m_set &&
-                !m_scores[i].m_explored)
+                !scores[i].m_explored)
             {
-                if (!m_scores[i].m_set)
+                if (!scores[i].m_set)
                 {
-                    m_scores[i].m_set = true;
-                    m_scores[i].m_value = e.m_cost;
-                    endsMultiset.insert(Utils::Dijkstra::End(i, m_scores[i].m_value));
+                    scores[i].m_set = true;
+                    scores[i].m_path.m_length = scores[currVertex].m_path.m_length + e.m_cost;
+                    scores[i].m_begin = currVertex;
+                    edgesMultiset.insert(Utils::Edge(scores[i].m_begin, i, scores[i].m_path.m_length));
                 }
-                else if (m_scores[i].m_value > m_scores[currVertex].m_value + e.m_cost)
+                else if (scores[i].m_path.m_length > scores[currVertex].m_path.m_length + e.m_cost)
                 {
-                    endsMultiset.erase(Utils::Dijkstra::End(i, m_scores[i].m_value));
-                    m_scores[i].m_value = m_scores[currVertex].m_value + e.m_cost;
-                    endsMultiset.insert(Utils::Dijkstra::End(i, m_scores[i].m_value));
+                    edgesMultiset.erase(Utils::Edge(scores[i].m_begin, i, scores[i].m_path.m_length));
+                    scores[i].m_begin = currVertex;
+                    scores[i].m_path.m_length = scores[currVertex].m_path.m_length + e.m_cost;
+                    edgesMultiset.insert(Utils::Edge(scores[i].m_begin, i, scores[i].m_path.m_length));
                 }
             }
         }
 
-        if (endsMultiset.empty())
+        if (edgesMultiset.empty())
         {
             break;
         }
-        currVertex = endsMultiset.begin()->m_end;
-        endsMultiset.erase(endsMultiset.begin());
-        m_scores[currVertex].m_explored = true;
+        const Utils::Edge& e = *(edgesMultiset.begin());
+        currVertex = e.m_end;
+        scores[currVertex].m_explored = true;
+        scores[currVertex].m_path.m_vertices = scores[e.m_begin].m_path.m_vertices;
+        scores[currVertex].m_path.m_vertices.push_back(currVertex);
+        edgesMultiset.erase(edgesMultiset.begin());
     }
 
     if (currVertex != endVertex)
     {
         return false;
+    }
+
+    //debug
+    std::cout << "Scores: " << std::endl;
+    for (auto& score : scores)
+    {
+        std::cout << (score.m_explored ? "[explored; " : "[not explored; ") <<
+            (score.m_set ? " set: " : " not set: ") <<
+            score.m_path << ']' << std::endl;
+    }
+
+    length = scores[endVertex].m_path.m_length;
+
+    return true;
+}
+
+// SSSP Dijkstra
+bool GraphMatrix::Dijkstra(uint32_t startingVertex, std::vector<Path>& paths)
+{
+    if (startingVertex < 1 || startingVertex > m_numVertices)
+    {
+        return false;
+    }
+    --startingVertex;
+
+    std::vector<Utils::VertexCost> scores(m_numVertices);
+    Utils::EdgesMultiset edgesMultiset(Utils::edgesCostsComp);
+
+    uint32_t currVertex = startingVertex;
+    scores[currVertex].m_explored = true;
+    scores[currVertex].m_set = true;
+    scores[currVertex].m_path.m_vertices.push_back(currVertex);
+    scores[currVertex].m_path.m_length = 0;
+
+    for (;;)
+    {
+        for (auto crossingEdgeIt = edgesMultiset.begin(); crossingEdgeIt != edgesMultiset.end();)
+        {
+            if (scores[crossingEdgeIt->m_end].m_explored)
+            {
+                edgesMultiset.erase(crossingEdgeIt++);
+            }
+            else
+            {
+                ++crossingEdgeIt;
+            }
+        }
+
+        for (uint32_t i = 0; i < m_numVertices; ++i)
+        {
+            Edge& e = m_matrix[currVertex][i];
+            if (e.m_set &&
+                !scores[i].m_explored)
+            {
+                if (!scores[i].m_set)
+                {
+                    scores[i].m_set = true;
+                    scores[i].m_path.m_length = scores[currVertex].m_path.m_length + e.m_cost;
+                    scores[i].m_begin = currVertex;
+                    edgesMultiset.insert(Utils::Edge(scores[i].m_begin, i, scores[i].m_path.m_length));
+                }
+                else if (scores[i].m_path.m_length > scores[currVertex].m_path.m_length + e.m_cost)
+                {
+                    edgesMultiset.erase(Utils::Edge(scores[i].m_begin, i, scores[i].m_path.m_length));
+                    scores[i].m_begin = currVertex;
+                    scores[i].m_path.m_length = scores[currVertex].m_path.m_length + e.m_cost;
+                    edgesMultiset.insert(Utils::Edge(scores[i].m_begin, i, scores[i].m_path.m_length));
+                }
+            }
+        }
+
+        if (edgesMultiset.empty())
+        {
+            break;
+        }
+        const Utils::Edge& e = *(edgesMultiset.begin());
+        currVertex = e.m_end;
+        scores[currVertex].m_explored = true;
+        scores[currVertex].m_path.m_vertices = scores[e.m_begin].m_path.m_vertices;
+        scores[currVertex].m_path.m_vertices.push_back(currVertex);
+        edgesMultiset.erase(edgesMultiset.begin());
+    }
+
+    //debug
+    std::cout << "Scores: "  << std::endl;
+    for (auto& score : scores)
+    {
+        std::cout << (score.m_explored ? "[explored; " : "[not explored; ") <<
+            (score.m_set ? " set: " : " not set: ") <<
+            score.m_path << ']' << std::endl;
+    }
+
+    for (auto& score : scores)
+    {
+        paths.push_back(std::move(score.m_path));
     }
 
     return true;
@@ -406,8 +461,14 @@ bool GraphMatrix::MSTPrimStraightforward(GraphMatrix &mst)
 
     std::list<uint32_t> vertices;
     vertices.push_back(0);
-    m_scores = std::move(std::vector<Score>(m_numVertices));
-    m_scores[0].m_explored = true;
+    struct Score
+    {
+        bool m_explored;
+        Score() : m_explored(false)
+        {}
+    };
+    std::vector<Score> scores(m_numVertices);
+    scores[0].m_explored = true;
 
     while (vertices.size() != m_numVertices)
     {
@@ -423,7 +484,7 @@ bool GraphMatrix::MSTPrimStraightforward(GraphMatrix &mst)
             for (uint32_t i = 0; i < m_numVertices; ++i)
             {
                 if (m_matrix[v][i].m_set && // real edge
-                    (!m_scores[i].m_explored) && // end explored?
+                    (!scores[i].m_explored) && // end explored?
                     (!min.m_set || // min set?
                      min.m_val > m_matrix[v][i].m_cost)) // min condition
                 {
@@ -436,7 +497,7 @@ bool GraphMatrix::MSTPrimStraightforward(GraphMatrix &mst)
             }
         }
         vertices.push_back(min.m_end);
-        m_scores[min.m_end].m_explored = true;
+        scores[min.m_end].m_explored = true;
         // add edge
         ++ mst.m_numEdges;
         mst.m_matrix[min.m_begin][min.m_end].m_set = mst.m_matrix[min.m_end][min.m_begin].m_set = true;
@@ -459,14 +520,14 @@ bool GraphMatrix::MSTPrim(GraphMatrix &mst)
     mst.m_numVertices = m_numVertices;
     mst.m_matrix.resize(mst.m_numVertices, mst.m_numVertices);
 
-    std::vector<Utils::Prim::VertexCost> verticesCosts(m_numVertices);
-    Utils::Prim::EdgesMultiset edgesMultiset(Utils::Prim::edgesCostsComp);
+    std::vector<Utils::VertexCost> verticesCosts(m_numVertices);
+    Utils::EdgesMultiset edgesMultiset(Utils::edgesCostsComp);
 
     uint32_t numExploredVertices = 1;
     uint32_t currVertex = 0;
     verticesCosts[currVertex].m_explored = true;
     verticesCosts[currVertex].m_set = true;
-    verticesCosts[currVertex].m_cost = 0;
+    verticesCosts[currVertex].m_path.m_length = 0;
 
     while (numExploredVertices != m_numVertices)
     {
@@ -491,16 +552,16 @@ bool GraphMatrix::MSTPrim(GraphMatrix &mst)
                 if (!verticesCosts[i].m_set)
                 {
                     verticesCosts[i].m_set = true;
-                    verticesCosts[i].m_cost = e.m_cost;
+                    verticesCosts[i].m_path.m_length = e.m_cost;
                     verticesCosts[i].m_begin = currVertex;
-                    edgesMultiset.insert(Utils::Prim::Edge(currVertex, i, e.m_cost));
+                    edgesMultiset.insert(Utils::Edge(currVertex, i, e.m_cost));
                 }
-                else if (verticesCosts[i].m_cost > e.m_cost)
+                else if (verticesCosts[i].m_path.m_length > e.m_cost)
                 {
-                    edgesMultiset.erase(Utils::Prim::Edge(verticesCosts[i].m_begin, i, verticesCosts[i].m_cost));
+                    edgesMultiset.erase(Utils::Edge(verticesCosts[i].m_begin, i, verticesCosts[i].m_path.m_length));
                     verticesCosts[i].m_begin = currVertex;
-                    verticesCosts[i].m_cost = e.m_cost;
-                    edgesMultiset.insert(Utils::Prim::Edge(verticesCosts[i].m_begin, i, verticesCosts[i].m_cost));
+                    verticesCosts[i].m_path.m_length = e.m_cost;
+                    edgesMultiset.insert(Utils::Edge(verticesCosts[i].m_begin, i, verticesCosts[i].m_path.m_length));
                 }
             }
         }
@@ -517,7 +578,7 @@ bool GraphMatrix::MSTPrim(GraphMatrix &mst)
                 true;
         mst.m_matrix[currVertex][verticesCosts[currVertex].m_begin].m_cost =
             mst.m_matrix[verticesCosts[currVertex].m_begin][currVertex].m_cost =
-                verticesCosts[currVertex].m_cost;
+                verticesCosts[currVertex].m_path.m_length;
         ++mst.m_numEdges;
         ++numExploredVertices;
     }
@@ -606,14 +667,14 @@ bool GraphMatrix::BellmandFord(uint32_t sourceVertex, std::vector<Path>& paths)
     return true;
 }
 
-bool GraphMatrix::FloydWarshall(Matrix<LengthResult>& length, Matrix<int64_t>& path)
+bool GraphMatrix::FloydWarshall(Matrix<LengthResult>& length, Matrix<int64_t>& pathsMatrix)
 {
     // TODO: size [2 x m_numVetices x m_numVetices] is enough
     std::vector<Matrix<Utils::FloydWarshall::MatrixEntity> > matrixLayers;
     matrixLayers.resize(m_numVertices);
 
-    path.resize(m_numVertices, m_numVertices);
-    path.fill(-1);
+    pathsMatrix.resize(m_numVertices, m_numVertices);
+    pathsMatrix.fill(-1);
 
     for (auto& matrix : matrixLayers)
     {
@@ -633,7 +694,7 @@ bool GraphMatrix::FloydWarshall(Matrix<LengthResult>& length, Matrix<int64_t>& p
             {
                 matrixLayers[0][i][j].m_infinity = false;
                 matrixLayers[0][i][j].m_length = m_matrix[i][j].m_cost;
-                path[i][j] = j;
+                pathsMatrix[i][j] = j;
             }
         }
     }
@@ -660,7 +721,7 @@ bool GraphMatrix::FloydWarshall(Matrix<LengthResult>& length, Matrix<int64_t>& p
                     {
                         minEntity.m_infinity = false;
                         minEntity.m_length = matrixLayers[k - 1][i][k].m_length + matrixLayers[k - 1][k][j].m_length;
-                        path[i][j] = k;
+                        pathsMatrix[i][j] = k;
                     }
                 }
                 matrixLayers[k][i][j].m_infinity = minEntity.m_infinity;
@@ -687,6 +748,53 @@ bool GraphMatrix::FloydWarshall(Matrix<LengthResult>& length, Matrix<int64_t>& p
         }
     }
 
+    return true;
+}
+
+bool GraphMatrix::Johnson(Matrix<Path>& pathMatrix)
+{
+    GraphMatrix supportGraph = *this;
+    ++ supportGraph.m_numVertices;
+    supportGraph.m_matrix.resize(supportGraph.m_numVertices, supportGraph.m_numVertices);
+    for (uint32_t i = 0; i < supportGraph.m_numVertices - 1; ++i)
+    {
+        supportGraph.m_matrix[supportGraph.m_numVertices - 1][i].m_set = true;
+        supportGraph.m_matrix[supportGraph.m_numVertices - 1][i].m_cost = 0;
+
+        supportGraph.m_matrix[i][supportGraph.m_numVertices - 1].m_set = false;
+    }
+    std::vector<Path> tmpPaths;
+    if (!supportGraph.BellmandFord(supportGraph.m_numVertices - 1, tmpPaths))
+    {
+        return false;
+    }
+
+    -- supportGraph.m_numVertices;
+    // re-calculate edges lengths
+    for (uint32_t i = 0; i < supportGraph.m_numVertices; ++i)
+    {
+        for (uint32_t j = 0; j < supportGraph.m_numVertices; ++j)
+        {
+            if (supportGraph.m_matrix[i][j].m_set)
+            {
+                supportGraph.m_matrix[i][j].m_cost += (tmpPaths[i].m_length - tmpPaths[j].m_length);
+            }
+        }
+    }
+    supportGraph.m_matrix.resize(supportGraph.m_numVertices, supportGraph.m_numVertices);
+
+    pathMatrix.resize(m_numVertices, m_numVertices);
+    for (uint32_t i = 0; i < m_numVertices; ++i)
+    {
+        std::vector<Path> paths;
+        supportGraph.Dijkstra(i + 1, paths);
+
+        for (uint32_t j = 0; j < m_numVertices; ++j)
+        {
+            pathMatrix[i][j] = paths[j];
+            pathMatrix[i][j].m_length -= (tmpPaths[i].m_length - tmpPaths[j].m_length);
+        }
+    }
 
     return true;
 }

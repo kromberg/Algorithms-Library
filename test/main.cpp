@@ -68,80 +68,20 @@ void optimalBSTFunc()
     std::cin.get();
 }
 
-void BellmandFordFunc()
+void readGraphMatrix(GraphMatrix &graphMatrix)
 {
-    // insert code here...
     std::ifstream fin("graph.in");
 
-    GraphMatrix graphMatrix;
     if (!graphMatrix.read(fin))
     {
         std::cout << "Cannot read graph from file" << std::endl;
         exit(2);
     }
-
-    graphMatrix.write(std::cout);
-
-    std::vector<GraphMatrix::Path> paths;
-    graphMatrix.BellmandFord(2, paths);
-    for (auto& path : paths)
-    {
-        std::cout << path << std::endl;
-    }
-
-    std::cin.get();
 }
 
-void FloydWarshallFunc()
+void BfsDfs()
 {
-    // insert code here...
     std::ifstream fin("graph.in");
-
-    GraphMatrix graphMatrix;
-    if (!graphMatrix.read(fin))
-    {
-        std::cout << "Cannot read graph from file" << std::endl;
-        exit(2);
-    }
-
-    graphMatrix.write(std::cout);
-
-    Matrix<GraphMatrix::LengthResult> length;
-    Matrix<int64_t> path;
-    graphMatrix.FloydWarshall(length, path);
-    std::cout << length << std::endl;
-    std::cout << path << std::endl;
-
-    std::cin.get();
-}
-
-int main(int argc, const char * argv[])
-{
-    FloydWarshallFunc();
-#if 0
-    // insert code here...
-    std::cout << "Creating graph.\n";
-    std::ifstream fin("graph.in");
-
-    GraphMatrix graphMatrix;
-    if (!graphMatrix.read(fin))
-    {
-        std::cout << "Cannot read graph from file" << std::endl;
-        exit(2);
-    }
-
-    GraphMatrix mst;
-    graphMatrix.MSTPrim(mst);
-    std::ofstream foutMst1("graph.mst1.out");
-    mst.write(foutMst1);
-#endif
-#if 0
-    double length = 0;
-    graphMatrix.Dijkstra(1, 5, length);
-    std::ofstream foutDijkstra1("graph.dijkstra1.out");
-    graphMatrix.write(foutDijkstra1);
-#endif
-#if 0
     Graph graph;
     graph.read(fin);
     const VerticesList& verticesList = graph.getVertices();
@@ -159,14 +99,14 @@ int main(int argc, const char * argv[])
         std::cout << "Cannot find vertex" << std::endl;
         exit(2);
     }
-    std::ofstream foutBfs1("graph.bfs1.out");
-    std::ofstream foutDfs1("graph.dfs1.out");
 
+    std::cout << "BFS from 1" << std::endl;
     graph.BFS(vertex);
-    graph.write(foutBfs1);
+    graph.write(std::cout);
+    std::cout << "DFS from 1" << std::endl;
     graph.DFS(vertex);
-    graph.write(foutDfs1);
-    
+    graph.write(std::cout);
+
     vertex = nullptr;
     for (auto& verIt : verticesList)
     {
@@ -181,13 +121,108 @@ int main(int argc, const char * argv[])
         std::cout << "Cannot find vertex" << std::endl;
         exit(2);
     }
-    std::ofstream foutBfs2("graph.bfs2.out");
-    std::ofstream foutDfs2("graph.dfs2.out");
+    std::cout << "BFS from 6" << std::endl;
     graph.BFS(vertex);
-    graph.write(foutBfs2);
+    graph.write(std::cout);
+    std::cout << "DFS from 6" << std::endl;
     graph.DFS(vertex);
-    graph.write(foutDfs2);
-#endif
+    graph.write(std::cout);
+
+    std::cin.get();
+}
+
+void MSTPrimFunc()
+{
+    GraphMatrix graphMatrix;
+    readGraphMatrix(graphMatrix);
+
+    GraphMatrix mst;
+    graphMatrix.MSTPrim(mst);
+    mst.write(std::cout);
+    std::cin.get();
+}
+
+void DijkstraFunc()
+{
+    GraphMatrix graphMatrix;
+    readGraphMatrix(graphMatrix);
+
+    double length = 0;
+    graphMatrix.Dijkstra(1, 6, length);
+    std::cout << "Length : " << length << std::endl;
+    graphMatrix.write(std::cout);
+    std::cin.get();
+}
+
+
+void BellmandFordFunc()
+{
+    GraphMatrix graphMatrix;
+    readGraphMatrix(graphMatrix);
+
+    graphMatrix.write(std::cout);
+
+    std::vector<GraphMatrix::Path> paths;
+    graphMatrix.BellmandFord(2, paths);
+    for (auto& path : paths)
+    {
+        std::cout << path << std::endl;
+    }
+
+    std::cin.get();
+}
+
+void FloydWarshallFunc()
+{
+    GraphMatrix graphMatrix;
+    readGraphMatrix(graphMatrix);
+
+    graphMatrix.write(std::cout);
+
+    Matrix<GraphMatrix::LengthResult> length;
+    Matrix<int64_t> path;
+    graphMatrix.FloydWarshall(length, path);
+    std::cout << length << std::endl;
+    std::cout << path << std::endl;
+
+    std::cin.get();
+}
+
+void JohnsonFunc()
+{
+    GraphMatrix graphMatrix;
+    readGraphMatrix(graphMatrix);
+    graphMatrix.write(std::cout);
+
+    Matrix<GraphMatrix::Path> pathsMatrix;
+    graphMatrix.Johnson(pathsMatrix);
+    std::cout << pathsMatrix << std::endl;
+
+    //for (uint32_t i = 0; i < pathsMatrix.getRowsCount(); ++i)
+    //{
+    //    for (uint32_t j = 0; i < pathsMatrix.getColsCount(); ++j)
+    //    {
+    //        std::cout << i << " -> " << j << std::endl;
+    //        bool first = true;
+    //        for (auto& v : pathsMatrix[i][j].m_vertices)
+    //        {
+    //            if (!first)
+    //            {
+    //                std::cout << " -> ";
+    //            }
+    //            std::cout << v;
+    //            first = false;
+    //        }
+    //        std::cout << std::endl;
+    //    }
+    //}
+
+    std::cin.get();
+}
+
+int main(int argc, const char * argv[])
+{
+    JohnsonFunc();
     
     return 0;
 }

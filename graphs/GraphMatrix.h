@@ -47,10 +47,7 @@ public:
     {
         bool m_set;
         double m_cost;
-        Edge() :
-            m_set(false),
-            m_cost(0)
-        {}
+        Edge();
     };
 
 private:
@@ -62,18 +59,6 @@ private:
 
     Matrix<Edge> m_matrix;
     bool m_directed;
-    struct Score
-    {
-        bool m_explored;
-        bool m_set;
-        double m_value;
-        Score():
-            m_explored(false),
-            m_set(false),
-            m_value(0)
-        {}
-    };
-    std::vector<Score> m_scores;
 
 public:
     GraphMatrix();
@@ -93,9 +78,11 @@ public:
 
     // single source shortest path
     bool BellmandFord(uint32_t sourceVertex, std::vector<Path>& paths);
+    bool Dijkstra(uint32_t startingVertex, std::vector<Path>& paths);
 
     // all pairs shortest path
-    bool FloydWarshall(Matrix<LengthResult>& length, Matrix<int64_t>& path);
+    bool FloydWarshall(Matrix<LengthResult>& length, Matrix<int64_t>& pathsMatrix);
+    bool Johnson(Matrix<Path>& pathMatrix);
 };
 
 inline const bool GraphMatrix::isDirected() const
@@ -106,49 +93,29 @@ inline const bool GraphMatrix::isDirected() const
 class GraphMatrix::Utils
 {
 public:
-    class Dijkstra
+    struct Edge
     {
-    public:
-        struct End
-        {
-            uint32_t m_end;
-            double m_score;
-            End(const uint32_t end, const double score);
-            End(const End& e);
-            End(End&& e);
-            End& operator=(End&& e);
-        };
-        static bool endsScoresComp(const End& e1, const End& e2) { return e1.m_score < e2.m_score; }
-        typedef std::multiset<End, bool(*)(const End&, const End&)> EndsMultiset;
+        uint32_t m_begin;
+        uint32_t m_end;
+        double m_cost;
+        Edge(const uint32_t begin, const uint32_t end, const double cost);
+        Edge(const Edge& e);
+        Edge(Edge&& e);
+        Edge& operator=(Edge&& e);
     };
+    static bool edgesCostsComp(const Edge& e1, const Edge& e2) { return e1.m_cost < e2.m_cost; }
+    typedef std::multiset<Edge, bool(*)(const Edge&, const Edge&)> EdgesMultiset;
 
-    class Prim
+    struct VertexCost
     {
-    public:
-        struct VertexCost
-        {
-            bool m_set;
-            bool m_explored;
-            uint32_t m_begin;
-            double m_cost;
-            VertexCost();
-            VertexCost(const uint32_t begin, const double cost);
-            VertexCost(VertexCost&& v);
-            VertexCost& operator=(VertexCost&& v);
-        };
-
-        struct Edge
-        {
-            uint32_t m_begin;
-            uint32_t m_end;
-            double m_cost;
-            Edge(const uint32_t begin, const uint32_t end, const double cost);
-            Edge(const Edge& e);
-            Edge(Edge&& e);
-            Edge& operator=(Edge&& e);
-        };
-        static bool edgesCostsComp(const Edge& e1, const Edge& e2) { return e1.m_cost < e2.m_cost; }
-        typedef std::multiset<Edge, bool(*)(const Edge&, const Edge&)> EdgesMultiset;
+        bool m_set;
+        bool m_explored;
+        uint32_t m_begin;
+        GraphMatrix::Path m_path;
+        VertexCost();
+        VertexCost(const uint32_t begin, const double cost);
+        VertexCost(VertexCost&& v);
+        VertexCost& operator=(VertexCost&& v);
     };
 
     class BellmanFord
