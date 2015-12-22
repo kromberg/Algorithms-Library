@@ -9,8 +9,11 @@
 #include <stdio.h>
 #include <list>
 #include <iostream>
+#include <map>
 
+#include "General/BitsVector.h"
 #include "GraphMatrix.h"
+
 
 GraphMatrix::Utils::Edge::Edge(const uint32_t begin, const uint32_t end, const double cost) :
     m_begin(begin),
@@ -202,6 +205,21 @@ GraphMatrix::GraphMatrix():
 GraphMatrix::~GraphMatrix()
 {
     clear();
+}
+
+const bool GraphMatrix::isComplete() const
+{
+    for (uint32_t i = 0; i < m_numVertices; ++i)
+    {
+        for (uint32_t j = 0; j < m_numVertices; ++j)
+        {
+            if (!m_matrix[i][j].m_set)
+            {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 void GraphMatrix::clear()
@@ -794,6 +812,70 @@ bool GraphMatrix::Johnson(Matrix<Path>& pathMatrix)
             pathMatrix[i][j] = paths[j];
             pathMatrix[i][j].m_length -= (tmpPaths[i].m_length - tmpPaths[j].m_length);
         }
+    }
+
+    return true;
+}
+
+bool GraphMatrix::travelingSalesmanProblem(Path& path)
+{
+    if (isDirected() || !isComplete())
+    {
+        return false;
+    }
+
+    typedef uint64_t VerticesSubset;
+    std::map<VerticesSubset, std::vector<double> > verticesSubsetToLength;
+
+    // TODO: make it bits vector
+    VerticesSubset verticesSubset = 0;
+    VerticesSubset maxVerticesSubset = 0;
+
+    auto getFirstVerticesSubset = [&verticesSubset, &maxVerticesSubset](const uint32_t m, const uint32_t numVertices) -> void {
+        for (uint32_t i = 0; i < m; ++i)
+        {
+            //verticesSubset.set(i);
+            verticesSubset |= (1 << i);
+        }
+        maxVerticesSubset = (verticesSubset << (numVertices - m));
+        verticesSubset <<= 1;
+        verticesSubset |= 1;
+    };
+
+    auto getNextVerticesSubset = [&verticesSubset, &maxVerticesSubset]() -> bool {
+        verticesSubset >>= 1;
+        // t gets verticesSubset's least significant 0 bits set to 1
+        uint64_t t = verticesSubset | (verticesSubset - 1);
+        // Next set to 1 the most significant bit to change, 
+        // set to 0 the least significant ones, and add the necessary 1 bits.
+        unsigned long idx = 0;
+        verticesSubset = (t + 1) | (((~t & -~t) - 1) >> (_BitScanForward64(&idx, verticesSubset) + 1));
+
+        if (verticesSubset > maxVerticesSubset)
+        {
+            return false;
+        }
+        verticesSubset <<= 1;
+        verticesSubset |= 1;
+        return true;
+    };
+
+    for (uint32_t m = 2; m <= m_numVertices; ++m)
+    {
+        getFirstVerticesSubset(m, m_numVertices);
+
+        uint32_t numProcessed = 0;
+        uint8_t pos = 2;
+        do {
+            if (!(verticesSubset & (1 << (pos - 1))))
+            {
+                pos += 1;
+            }
+            verticesSubsetToLength[verticesSubset ^ (1 << (pos - 1))]
+
+        } while (numProcessed < m_numVertices);
+
+        //verticesSubsetToLength[verticesSubset]
     }
 
     return true;

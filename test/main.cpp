@@ -131,6 +131,17 @@ void BfsDfs()
     std::cin.get();
 }
 
+void VertexCoverFunc()
+{
+    std::ifstream fin("graph.in");
+    Graph graph;
+    graph.read(fin);
+    uint32_t k = 3;
+    std::cout << "Vertex cover with k = " << k << (graph.doesVertexCoverExists(3) ? " exists" : " doesn't exist");
+
+    std::cin.get();
+}
+
 void MSTPrimFunc()
 {
     GraphMatrix graphMatrix;
@@ -198,31 +209,12 @@ void JohnsonFunc()
     graphMatrix.Johnson(pathsMatrix);
     std::cout << pathsMatrix << std::endl;
 
-    //for (uint32_t i = 0; i < pathsMatrix.getRowsCount(); ++i)
-    //{
-    //    for (uint32_t j = 0; i < pathsMatrix.getColsCount(); ++j)
-    //    {
-    //        std::cout << i << " -> " << j << std::endl;
-    //        bool first = true;
-    //        for (auto& v : pathsMatrix[i][j].m_vertices)
-    //        {
-    //            if (!first)
-    //            {
-    //                std::cout << " -> ";
-    //            }
-    //            std::cout << v;
-    //            first = false;
-    //        }
-    //        std::cout << std::endl;
-    //    }
-    //}
-
     std::cin.get();
 }
 
 int main(int argc, const char * argv[])
 {
-    JohnsonFunc();
+    VertexCoverFunc();
     
     return 0;
 }

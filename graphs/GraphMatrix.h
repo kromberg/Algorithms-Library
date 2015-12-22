@@ -64,6 +64,7 @@ public:
     GraphMatrix();
     ~GraphMatrix();
 
+    const bool isComplete() const;
     const bool isDirected() const;
 
     void clear();
@@ -83,6 +84,12 @@ public:
     // all pairs shortest path
     bool FloydWarshall(Matrix<LengthResult>& length, Matrix<int64_t>& pathsMatrix);
     bool Johnson(Matrix<Path>& pathMatrix);
+
+    // Vertex Cover
+    bool doesVertexCoverExists(const uint32_t k);
+
+    // Traveling Salesman Problem
+    bool travelingSalesmanProblem(Path& path);
 };
 
 inline const bool GraphMatrix::isDirected() const

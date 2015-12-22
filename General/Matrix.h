@@ -25,6 +25,7 @@ public:
     ~Matrix();
     
     ValueType* operator[] (uint64_t i);
+    const ValueType* operator[] (uint64_t i) const;
 
     void reset();
     void resize(uint64_t rowsCount, uint64_t colsCount);

@@ -179,6 +179,19 @@ bool Graph::doesVertexCoverExists(const uint32_t k)
         return false;
     }
 
+    /* TODO: Algorithm:
+    Choose arbitrary edge.
+    1. Delete the first vertex of the edge
+        1.1. Recursively calculate doesVertexCoverExists(k - 1)
+        1.2. Success -> return
+    2. Delete the second vertex of the edge
+        2.1. Recursively calculate doesVertexCoverExists(k - 1)
+        2.2. Success -> return
+    3. Unsuccessful
+    */
+    return false;
+
+#if 0
     if (0 == k)
     {
         if (m_vertices.size() > 0)
@@ -271,5 +284,6 @@ bool Graph::doesVertexCoverExists(const uint32_t k)
             return true;
         }
     }
+#endif 
     return false;
 }

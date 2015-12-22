@@ -74,6 +74,10 @@ private:
     EdgesList m_edges;
     bool m_isDirected;
 
+    // non-copyble
+    Graph(const Graph &graph) = delete;
+    Graph& operator=(const Graph &graph) = delete;
+
 public:
     Graph();
     ~Graph();

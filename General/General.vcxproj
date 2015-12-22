@@ -115,6 +115,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BitsVector.h" />
     <ClInclude Include="Knapsack.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="MaxWIS.h" />
@@ -122,6 +123,7 @@
     <ClInclude Include="SequenceAlignment.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BitsVector.cpp" />
     <ClCompile Include="Knapsack.cpp" />
     <ClInclude Include="Matrix.hpp">
       <FileType>CppCode</FileType>

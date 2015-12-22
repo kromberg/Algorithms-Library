@@ -48,6 +48,12 @@ T* Matrix<T>::operator[] (uint64_t i)
 }
 
 template<typename T>
+const T* Matrix<T>::operator[] (uint64_t i) const
+{
+    return &m_matrix.get()[i * m_colsCount];
+}
+
+template<typename T>
 void Matrix<T>::reset()
 {
     m_matrix.reset();
