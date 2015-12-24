@@ -20,6 +20,11 @@ OptimalBST::MatrixEntity::MatrixEntity() :
     m_rootPos(0)
 {}
 
+OptimalBST::MatrixEntity::MatrixEntity(const MatrixEntity& matrixEntity):
+    m_val(matrixEntity.m_val),
+    m_rootPos(matrixEntity.m_rootPos)
+{}
+
 OptimalBST::MatrixEntity::MatrixEntity(MatrixEntity&& matrixEntity)
 {
     m_val = matrixEntity.m_val;

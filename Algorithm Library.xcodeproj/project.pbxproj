@@ -1,0 +1,327 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		7AF120441C1DA01E0017194B /* Graph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AF120431C1DA01E0017194B /* Graph.cpp */; };
+		7AF955C51C2C2EAC001E3EB4 /* GraphMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AF955C31C2C2EAC001E3EB4 /* GraphMatrix.cpp */; };
+		7AF955C91C2C2EE0001E3EB4 /* BitsVector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AF955C71C2C2EE0001E3EB4 /* BitsVector.cpp */; };
+		7AF955D41C2C2EF1001E3EB4 /* Knapsack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AF955CA1C2C2EF1001E3EB4 /* Knapsack.cpp */; };
+		7AF955D51C2C2EF1001E3EB4 /* MaxWIS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AF955CE1C2C2EF1001E3EB4 /* MaxWIS.cpp */; };
+		7AF955D61C2C2EF1001E3EB4 /* OptimalBST.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AF955D01C2C2EF1001E3EB4 /* OptimalBST.cpp */; };
+		7AF955D71C2C2EF1001E3EB4 /* SequenceAlignment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AF955D21C2C2EF1001E3EB4 /* SequenceAlignment.cpp */; };
+		7AF955DF1C2C2F09001E3EB4 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AF955DC1C2C2F09001E3EB4 /* main.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		7AF120361C1D9FBF0017194B /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		7AF120381C1D9FBF0017194B /* Algorithm Library */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Algorithm Library"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7AF120421C1DA00B0017194B /* Graph.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Graph.h; sourceTree = "<group>"; };
+		7AF120431C1DA01E0017194B /* Graph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Graph.cpp; sourceTree = "<group>"; };
+		7AF955C31C2C2EAC001E3EB4 /* GraphMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GraphMatrix.cpp; path = graphs/GraphMatrix.cpp; sourceTree = SOURCE_ROOT; };
+		7AF955C41C2C2EAC001E3EB4 /* GraphMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphMatrix.h; sourceTree = "<group>"; };
+		7AF955C71C2C2EE0001E3EB4 /* BitsVector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BitsVector.cpp; path = General/BitsVector.cpp; sourceTree = "<group>"; };
+		7AF955C81C2C2EE0001E3EB4 /* BitsVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BitsVector.h; path = General/BitsVector.h; sourceTree = "<group>"; };
+		7AF955CA1C2C2EF1001E3EB4 /* Knapsack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Knapsack.cpp; path = General/Knapsack.cpp; sourceTree = "<group>"; };
+		7AF955CB1C2C2EF1001E3EB4 /* Knapsack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Knapsack.h; path = General/Knapsack.h; sourceTree = "<group>"; };
+		7AF955CC1C2C2EF1001E3EB4 /* Matrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Matrix.h; path = General/Matrix.h; sourceTree = "<group>"; };
+		7AF955CD1C2C2EF1001E3EB4 /* Matrix.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Matrix.hpp; path = General/Matrix.hpp; sourceTree = "<group>"; };
+		7AF955CE1C2C2EF1001E3EB4 /* MaxWIS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MaxWIS.cpp; path = General/MaxWIS.cpp; sourceTree = "<group>"; };
+		7AF955CF1C2C2EF1001E3EB4 /* MaxWIS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MaxWIS.h; path = General/MaxWIS.h; sourceTree = "<group>"; };
+		7AF955D01C2C2EF1001E3EB4 /* OptimalBST.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OptimalBST.cpp; path = General/OptimalBST.cpp; sourceTree = "<group>"; };
+		7AF955D11C2C2EF1001E3EB4 /* OptimalBST.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OptimalBST.h; path = General/OptimalBST.h; sourceTree = "<group>"; };
+		7AF955D21C2C2EF1001E3EB4 /* SequenceAlignment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SequenceAlignment.cpp; path = General/SequenceAlignment.cpp; sourceTree = "<group>"; };
+		7AF955D31C2C2EF1001E3EB4 /* SequenceAlignment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SequenceAlignment.h; path = General/SequenceAlignment.h; sourceTree = "<group>"; };
+		7AF955D91C2C2F09001E3EB4 /* graph.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = graph.in; path = test/graph.in; sourceTree = "<group>"; };
+		7AF955DA1C2C2F09001E3EB4 /* graph.tsp.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = graph.tsp.in; path = test/graph.tsp.in; sourceTree = "<group>"; };
+		7AF955DB1C2C2F09001E3EB4 /* knapsack.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = knapsack.in; path = test/knapsack.in; sourceTree = "<group>"; };
+		7AF955DC1C2C2F09001E3EB4 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = test/main.cpp; sourceTree = "<group>"; };
+		7AF955DD1C2C2F09001E3EB4 /* optimal_bst.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = optimal_bst.in; path = test/optimal_bst.in; sourceTree = "<group>"; };
+		7AF955DE1C2C2F09001E3EB4 /* sequence_alignment.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = sequence_alignment.in; path = test/sequence_alignment.in; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		7AF120351C1D9FBF0017194B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		7AF1202F1C1D9FBF0017194B = {
+			isa = PBXGroup;
+			children = (
+				7AF955D81C2C2EF8001E3EB4 /* test */,
+				7AF955C61C2C2EC0001E3EB4 /* General */,
+				7AF1203A1C1D9FBF0017194B /* graphs */,
+				7AF120391C1D9FBF0017194B /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		7AF120391C1D9FBF0017194B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				7AF120381C1D9FBF0017194B /* Algorithm Library */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		7AF1203A1C1D9FBF0017194B /* graphs */ = {
+			isa = PBXGroup;
+			children = (
+				7AF955C31C2C2EAC001E3EB4 /* GraphMatrix.cpp */,
+				7AF955C41C2C2EAC001E3EB4 /* GraphMatrix.h */,
+				7AF120421C1DA00B0017194B /* Graph.h */,
+				7AF120431C1DA01E0017194B /* Graph.cpp */,
+			);
+			path = graphs;
+			sourceTree = "<group>";
+		};
+		7AF955C61C2C2EC0001E3EB4 /* General */ = {
+			isa = PBXGroup;
+			children = (
+				7AF955CA1C2C2EF1001E3EB4 /* Knapsack.cpp */,
+				7AF955CB1C2C2EF1001E3EB4 /* Knapsack.h */,
+				7AF955CC1C2C2EF1001E3EB4 /* Matrix.h */,
+				7AF955CD1C2C2EF1001E3EB4 /* Matrix.hpp */,
+				7AF955CE1C2C2EF1001E3EB4 /* MaxWIS.cpp */,
+				7AF955CF1C2C2EF1001E3EB4 /* MaxWIS.h */,
+				7AF955D01C2C2EF1001E3EB4 /* OptimalBST.cpp */,
+				7AF955D11C2C2EF1001E3EB4 /* OptimalBST.h */,
+				7AF955D21C2C2EF1001E3EB4 /* SequenceAlignment.cpp */,
+				7AF955D31C2C2EF1001E3EB4 /* SequenceAlignment.h */,
+				7AF955C71C2C2EE0001E3EB4 /* BitsVector.cpp */,
+				7AF955C81C2C2EE0001E3EB4 /* BitsVector.h */,
+			);
+			name = General;
+			sourceTree = "<group>";
+		};
+		7AF955D81C2C2EF8001E3EB4 /* test */ = {
+			isa = PBXGroup;
+			children = (
+				7AF955D91C2C2F09001E3EB4 /* graph.in */,
+				7AF955DA1C2C2F09001E3EB4 /* graph.tsp.in */,
+				7AF955DB1C2C2F09001E3EB4 /* knapsack.in */,
+				7AF955DC1C2C2F09001E3EB4 /* main.cpp */,
+				7AF955DD1C2C2F09001E3EB4 /* optimal_bst.in */,
+				7AF955DE1C2C2F09001E3EB4 /* sequence_alignment.in */,
+			);
+			name = test;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		7AF120371C1D9FBF0017194B /* Algorithm Library */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7AF1203F1C1D9FBF0017194B /* Build configuration list for PBXNativeTarget "Algorithm Library" */;
+			buildPhases = (
+				7AF120341C1D9FBF0017194B /* Sources */,
+				7AF120351C1D9FBF0017194B /* Frameworks */,
+				7AF120361C1D9FBF0017194B /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Algorithm Library";
+			productName = graphs;
+			productReference = 7AF120381C1D9FBF0017194B /* Algorithm Library */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		7AF120301C1D9FBF0017194B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				KnownAssetTags = (
+					New,
+				);
+				LastUpgradeCheck = 0710;
+				ORGANIZATIONNAME = "Egor Kromberg";
+				TargetAttributes = {
+					7AF120371C1D9FBF0017194B = {
+						CreatedOnToolsVersion = 7.1.1;
+					};
+				};
+			};
+			buildConfigurationList = 7AF120331C1D9FBF0017194B /* Build configuration list for PBXProject "Algorithm Library" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 7AF1202F1C1D9FBF0017194B;
+			productRefGroup = 7AF120391C1D9FBF0017194B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				7AF120371C1D9FBF0017194B /* Algorithm Library */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		7AF120341C1D9FBF0017194B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7AF120441C1DA01E0017194B /* Graph.cpp in Sources */,
+				7AF955D41C2C2EF1001E3EB4 /* Knapsack.cpp in Sources */,
+				7AF955D61C2C2EF1001E3EB4 /* OptimalBST.cpp in Sources */,
+				7AF955C91C2C2EE0001E3EB4 /* BitsVector.cpp in Sources */,
+				7AF955D71C2C2EF1001E3EB4 /* SequenceAlignment.cpp in Sources */,
+				7AF955C51C2C2EAC001E3EB4 /* GraphMatrix.cpp in Sources */,
+				7AF955DF1C2C2F09001E3EB4 /* main.cpp in Sources */,
+				7AF955D51C2C2EF1001E3EB4 /* MaxWIS.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		7AF1203D1C1D9FBF0017194B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = ./;
+				INCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				USER_HEADER_SEARCH_PATHS = "/Users/kromberg/Documents/Algorithms-Library/**";
+			};
+			name = Debug;
+		};
+		7AF1203E1C1D9FBF0017194B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = ./;
+				INCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				USER_HEADER_SEARCH_PATHS = "/Users/kromberg/Documents/Algorithms-Library/**";
+			};
+			name = Release;
+		};
+		7AF120401C1D9FBF0017194B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "Algorithm Library";
+			};
+			name = Debug;
+		};
+		7AF120411C1D9FBF0017194B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "Algorithm Library";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		7AF120331C1D9FBF0017194B /* Build configuration list for PBXProject "Algorithm Library" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7AF1203D1C1D9FBF0017194B /* Debug */,
+				7AF1203E1C1D9FBF0017194B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		7AF1203F1C1D9FBF0017194B /* Build configuration list for PBXNativeTarget "Algorithm Library" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7AF120401C1D9FBF0017194B /* Debug */,
+				7AF120411C1D9FBF0017194B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 7AF120301C1D9FBF0017194B /* Project object */;
+}

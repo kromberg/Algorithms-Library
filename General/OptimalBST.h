@@ -25,6 +25,7 @@ private:
         double m_val;
         uint32_t m_rootPos;
         MatrixEntity();
+        MatrixEntity(const MatrixEntity& matrixEntity);
         MatrixEntity(MatrixEntity&& matrixEntity);
     };
     friend std::ostream& operator<< (std::ostream& out, MatrixEntity& matrixEntity);

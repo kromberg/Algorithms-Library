@@ -17,10 +17,23 @@ public:
         Item(const uint32_t weight, const uint32_t value);
         Item(const Item& i);
         Item(Item&& i);
+        Item& operator=(Item&& i);
     };
     typedef std::vector<Item> ItemsVec;
     typedef std::list<Item> ItemsList;
 private:
+    struct ItemScore
+    {
+        bool m_set;
+        double m_val;
+        uint32_t m_idx;
+        ItemScore();
+        ItemScore(double val);
+        ItemScore(ItemScore&& itemScore);
+        ItemScore& operator=(ItemScore&& itemScore);
+    };
+    
+    uint32_t m_maxWeight;
     ItemsVec m_items;
 
 public:
@@ -28,7 +41,8 @@ public:
     ~Knapsack();
 
     bool read(std::istream& in);
-    bool run(const uint32_t maxWeight, uint32_t& res, ItemsList& resList = ItemsList());
+    bool run(uint32_t& res, ItemsList& resList);
+    bool runGreedy(uint32_t &res);
 };
 
 #endif // KNAPSACK_H
