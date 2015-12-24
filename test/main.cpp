@@ -26,8 +26,33 @@ void knapsackFunc()
         exit(2);
     }
     uint32_t val = 0;
-    knapsack.run(165, val);
+    Knapsack::ItemsList resList;
+    knapsack.run(val, resList);
     std::cout << val << std::endl;
+    for (auto& item : resList)
+    {
+        std::cout << "< Weight : " << item.m_weight << " ; Value : " << item.m_value << " >" << std::endl;
+    }
+
+    std::cout << "#######################################" << std::endl;
+    std::cout << "GREEDY" << std::endl;
+    resList.clear();
+    knapsack.runGreedy(val, resList);
+    std::cout << val << std::endl;
+    for (auto& item : resList)
+    {
+        std::cout << "< Weight : " << item.m_weight << " ; Value : " << item.m_value << " >" << std::endl;
+    }
+
+    std::cout << "#######################################" << std::endl;
+    std::cout << "BY VALUE" << std::endl;
+    resList.clear();
+    knapsack.runByValue(val, resList);
+    std::cout << val << std::endl;
+    for (auto& item : resList)
+    {
+        std::cout << "< Weight : " << item.m_weight << " ; Value : " << item.m_value << " >" << std::endl;
+    }
 
     std::cin.get();
 }
@@ -228,7 +253,7 @@ void TspFunc()
 
 int main(int argc, const char * argv[])
 {
-    TspFunc();
+    knapsackFunc();
     
     return 0;
 }

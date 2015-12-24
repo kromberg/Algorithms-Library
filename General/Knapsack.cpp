@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <iostream>
 
+#include "Matrix.h"
 #include "Knapsack.h"
 
 Knapsack::Item::Item():
@@ -40,20 +41,24 @@ Knapsack::Item& Knapsack::Item::operator=(Item&& i)
     return *this;
 }
 
-Knapsack::ItemScore::ItemScore():
+Knapsack::ItemScore::ItemScore(const uint32_t idx) :
+    m_idx(idx),
     m_set(false),
     m_val(0)
 {}
 
-Knapsack::ItemScore::ItemScore(double val):
+Knapsack::ItemScore::ItemScore(const uint32_t idx, double val) :
+    m_idx(idx),
     m_set(true),
     m_val(val)
 {}
 
 Knapsack::ItemScore::ItemScore(ItemScore&& itemScore):
+    m_idx(itemScore.m_idx),
     m_set(itemScore.m_set),
     m_val(itemScore.m_val)
 {
+    itemScore.m_idx = 0;
     itemScore.m_set = false;
     itemScore.m_val = 0;
 }
@@ -64,11 +69,63 @@ Knapsack::ItemScore& Knapsack::ItemScore::operator=(ItemScore&& itemScore)
     {
         return *this;
     }
+    m_idx = itemScore.m_idx;
     m_set = itemScore.m_set;
     m_val = itemScore.m_val;
+    itemScore.m_idx = 0;
     itemScore.m_set = false;
     itemScore.m_val = 0;
     return *this;
+}
+
+bool Knapsack::ItemScore::operator<(const ItemScore& itemScore)
+{
+    return m_val < itemScore.m_val;
+}
+
+Knapsack::Entity::Entity():
+    m_set(false),
+    m_val(0)
+{}
+
+Knapsack::Entity::Entity(const uint32_t val):
+    m_set(true),
+    m_val(val)
+{}
+
+Knapsack::Entity::Entity(Entity&& entity) :
+    m_set(entity.m_set),
+    m_val(entity.m_val)
+{
+    entity.m_set = false;
+    entity.m_val = 0;
+}
+
+Knapsack::Entity& Knapsack::Entity::operator=(Entity&& entity)
+{
+    if (this == &entity)
+    {
+        return *this;
+    }
+    m_set = entity.m_set;
+    m_val = entity.m_val;
+    entity.m_set = false;
+    entity.m_val = 0;
+    return *this;
+}
+
+std::ostream& operator<< (std::ostream& out, const Knapsack::Entity& entity)
+{
+    if (entity.m_set)
+    {
+        out << entity.m_val;
+    }
+    else
+    {
+        out << -1;
+    }
+    out << ';';
+    return out;
 }
 
 Knapsack::Knapsack()
@@ -126,7 +183,7 @@ bool Knapsack::run(
 
     res = knapsack[numItems][m_maxWeight - 1];
 
-    // TODO: backpropagation
+    // backpropagation
     uint32_t currentWieght = m_maxWeight;
     for (uint32_t i = numItems; i > 0; --i)
     {
@@ -143,7 +200,70 @@ bool Knapsack::run(
     return true;
 }
 
-bool Knapsack::runGreedy(uint32_t &res)
+bool Knapsack::runByValue(uint32_t& res, ItemsList& resList)
+{
+    auto it = std::max_element(m_items.begin(), m_items.end(), [](const Item& i1, const Item& i2) -> bool {
+        return i1.m_value < i2.m_value;
+    });
+    uint32_t maxValue = it->m_value;
+    uint32_t numOfItems = static_cast<uint32_t>(m_items.size());
+    Matrix<Entity> knapsackMatrix;
+    knapsackMatrix.resize(numOfItems + 1, numOfItems * maxValue + 1);
+
+    Entity minEntity;
+    Entity tmpVal;
+    knapsackMatrix[0][0] = std::move(Entity(0));
+    for (uint32_t i = 1; i <= numOfItems; ++i)
+    {
+        for (uint32_t x = 0; x <= numOfItems * maxValue; ++x)
+        {
+            tmpVal = ((m_items[i - 1].m_value < x) ? knapsackMatrix[i - 1][x - m_items[i - 1].m_value] : Entity(0));
+            minEntity = knapsackMatrix[i - 1][x];
+            
+            if (tmpVal.m_set &&
+                ((!minEntity.m_set) ||
+                 (minEntity.m_val > m_items[i - 1].m_weight + tmpVal.m_val)))
+            {
+                minEntity.m_set = true;
+                minEntity.m_val = m_items[i - 1].m_weight + tmpVal.m_val;
+            }
+            knapsackMatrix[i][x] = std::move(minEntity);
+        }
+    }
+    // debug
+    /*std::ofstream fout("knapsack.csv");
+    fout << knapsackMatrix << std::endl;*/
+
+    res = 0;
+    for (uint32_t x = 0; x <= numOfItems * maxValue; ++x)
+    {
+        if (knapsackMatrix[numOfItems][x].m_set &&
+            knapsackMatrix[numOfItems][x].m_val <= m_maxWeight)
+        {
+            res = x;
+        }
+    }
+
+    // TODO: backpropagation
+    uint32_t currVal = res;
+    for (uint32_t i = numOfItems; i > 0; --i)
+    {
+        if ((m_items[i - 1].m_value <= currVal) &&
+            knapsackMatrix[i - 1][currVal - m_items[i - 1].m_value].m_set)
+        {
+            if (knapsackMatrix[i][currVal].m_val ==
+                knapsackMatrix[i - 1][currVal - m_items[i - 1].m_value].m_val + m_items[i - 1].m_weight)
+            {
+                currVal -= m_items[i - 1].m_value;
+                resList.push_front(m_items[i - 1]);
+            }
+        }
+    }
+
+    return true;
+}
+
+bool Knapsack::runGreedy(uint32_t &res, ItemsList& resList)
 {
 
     std::vector<ItemScore> itemsScores;
@@ -155,19 +275,19 @@ bool Knapsack::runGreedy(uint32_t &res)
     {
         if (m_items[i].m_weight != 0)
         {
-            itemsScores.push_back(std::move(ItemScore(m_items[i].m_value / m_items[i].m_weight)));
+            itemsScores.push_back(std::move(ItemScore(i, static_cast<double>(m_items[i].m_value) / m_items[i].m_weight)));
         }
         else
         {
-            itemsScores.push_back(std::move(ItemScore()));
+            itemsScores.push_back(std::move(ItemScore(i)));
         }
     }
     std::sort(itemsScores.begin(), itemsScores.end());
     // debug
-    for (auto& itemScore : itemsScores)
+    /*for (auto& itemScore : itemsScores)
     {
         std::cout << itemScore.m_val << std::endl;
-    }
+    }*/
     
     res = 0;
     uint32_t currentWeight = 0;
@@ -181,6 +301,7 @@ bool Knapsack::runGreedy(uint32_t &res)
         {
             currentWeight += m_items[itemScore.m_idx].m_weight;
             res += m_items[itemScore.m_idx].m_value;
+            resList.push_back(m_items[itemScore.m_idx]);
         }
     }
     
@@ -190,6 +311,8 @@ bool Knapsack::runGreedy(uint32_t &res)
             (item.m_value > res))
         {
             res = item.m_value;
+            resList.clear();
+            resList.push_back(item);
         }
     }
     
