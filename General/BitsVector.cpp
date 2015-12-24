@@ -23,6 +23,8 @@ void BitsVector::clear()
 
 bool BitsVector::next()
 {
+    // TODO:
+    return false;
 }
 
 void BitsVector::set(const uint64_t pos)
@@ -53,7 +55,7 @@ bool BitsVector::operator> (const BitsVector& bitsVector)
     uint64_t otherSize = bitsVector.m_bits.size();
     if (ownSize == otherSize)
     {
-        for (uint32_t i = 0; i < ownSize; ++i)
+        for (uint64_t i = 0; i < ownSize; ++i)
         {
             if (m_bits[i] > bitsVector.m_bits[i])
             {
@@ -68,7 +70,7 @@ bool BitsVector::operator> (const BitsVector& bitsVector)
     }
     else if (ownSize > otherSize)
     {
-        for (uint32_t i = ownSize; i >= 1; --i)
+        for (uint64_t i = ownSize; i >= 1; --i)
         {
             if (i > otherSize)
             {
@@ -92,7 +94,7 @@ bool BitsVector::operator> (const BitsVector& bitsVector)
     }
     else //  (ownSize < otherSize)
     {
-        for (uint32_t i = otherSize; i >= 1; --i)
+        for (uint64_t i = otherSize; i >= 1; --i)
         {
             if (i > ownSize)
             {
@@ -146,7 +148,7 @@ bool BitsVector::operator== (const BitsVector& bitsVector)
         const uint64_t& minSize = (ownSize < otherSize) ? ownSize : otherSize;
         const std::vector<uint64_t>& maxBitsVector = (ownSize > otherSize) ? m_bits : bitsVector.m_bits;
         const std::vector<uint64_t>& minBitsVector = (ownSize < otherSize) ? m_bits : bitsVector.m_bits;
-        for (uint32_t i = maxSize; i >= 1; --i)
+        for (uint64_t i = maxSize; i >= 1; --i)
         {
             if (i > minSize)
             {

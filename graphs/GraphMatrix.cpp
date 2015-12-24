@@ -213,7 +213,7 @@ const bool GraphMatrix::isComplete() const
     {
         for (uint32_t j = 0; j < m_numVertices; ++j)
         {
-            if (!m_matrix[i][j].m_set)
+            if ((i != j) && !m_matrix[i][j].m_set)
             {
                 return false;
             }
@@ -817,7 +817,7 @@ bool GraphMatrix::Johnson(Matrix<Path>& pathMatrix)
     return true;
 }
 
-bool GraphMatrix::travelingSalesmanProblem(Path& path)
+bool GraphMatrix::travelingSalesmanProblem(double& length, Path& path)
 {
     if (isDirected() || !isComplete())
     {
@@ -825,58 +825,160 @@ bool GraphMatrix::travelingSalesmanProblem(Path& path)
     }
 
     typedef uint64_t VerticesSubset;
-    std::map<VerticesSubset, std::vector<double> > verticesSubsetToLength;
+    struct Length
+    {
+        bool m_infinity;
+        double m_length;
+        Length(double length) : m_infinity(false), m_length(length)
+        {}
+        Length() : m_infinity(true), m_length(0)
+        {}
+    };
+    std::map<VerticesSubset, std::vector<Length> > verticesSubsetToLength;
 
-    // TODO: make it bits vector
+    auto printVerticesSubsetToLength = [&verticesSubsetToLength](std::ostream &out) {
+        for (auto &it : verticesSubsetToLength)
+        {
+            for (auto i = 0; i < it.second.size(); ++i)
+            {
+                out << "<Subset : " << it.first << " ; " << "Length [" << i << "] : ";
+                if (it.second[i].m_infinity)
+                {
+                    out << "infinity";
+                }
+                else
+                {
+                    out << it.second[i].m_length;
+                }
+                out << '>' << std::endl;
+            }
+        }
+    };
+
+    // fill initial verticesSubsetToLength
+    verticesSubsetToLength[1].resize(m_numVertices);
+    verticesSubsetToLength[1][0].m_infinity = false;
+    verticesSubsetToLength[1][0].m_length = 0;
+
+    // TODO: make bits vector
     VerticesSubset verticesSubset = 0;
     VerticesSubset maxVerticesSubset = 0;
+    std::vector<uint32_t> subsetBitsPos;
+    // last iteration?
+    bool lastIteration = false;
 
-    auto getFirstVerticesSubset = [&verticesSubset, &maxVerticesSubset](const uint32_t m, const uint32_t numVertices) -> void {
-        for (uint32_t i = 0; i < m; ++i)
+    auto getFirstVerticesSubset = [&verticesSubset, &maxVerticesSubset, &subsetBitsPos, &lastIteration](const uint32_t m, const uint32_t numVertices) -> void {
+        subsetBitsPos.clear();
+        subsetBitsPos.reserve(m);
+        subsetBitsPos.push_back(0);
+        verticesSubset = 0;
+        for (uint32_t i = 0; i < m - 1; ++i)
         {
             //verticesSubset.set(i);
             verticesSubset |= (1 << i);
+            subsetBitsPos.push_back(i + 1);
         }
         maxVerticesSubset = (verticesSubset << (numVertices - m));
+        if (maxVerticesSubset == verticesSubset)
+        {
+            lastIteration = true;
+        }
+        else
+        {
+            lastIteration = false;
+        }
         verticesSubset <<= 1;
         verticesSubset |= 1;
     };
 
-    auto getNextVerticesSubset = [&verticesSubset, &maxVerticesSubset]() -> bool {
-        verticesSubset >>= 1;
-        // t gets verticesSubset's least significant 0 bits set to 1
-        uint64_t t = verticesSubset | (verticesSubset - 1);
-        // Next set to 1 the most significant bit to change, 
-        // set to 0 the least significant ones, and add the necessary 1 bits.
-        unsigned long idx = 0;
-        verticesSubset = (t + 1) | (((~t & -~t) - 1) >> (_BitScanForward64(&idx, verticesSubset) + 1));
-
-        if (verticesSubset > maxVerticesSubset)
+    auto getNextVerticesSubset = [&verticesSubset, &maxVerticesSubset, &subsetBitsPos, &lastIteration](const uint32_t m) -> bool {
+#pragma warning( disable : 4146 )
+        if (lastIteration)
         {
             return false;
         }
+
+        verticesSubset >>= 1;
+
+        do {
+            // t gets verticesSubset's least significant 0 bits set to 1
+            uint64_t t = verticesSubset | (verticesSubset - 1);
+            // Next set to 1 the most significant bit to change, 
+            // set to 0 the least significant ones, and add the necessary 1 bits.
+            unsigned long idx = 0;
+            _BitScanForward64(&idx, verticesSubset);
+            verticesSubset = (t + 1) | (((~t & -~t) - 1) >> (idx + 1));
+        } while (verticesSubset > maxVerticesSubset);
+
+        if (verticesSubset == maxVerticesSubset)
+        {
+            lastIteration = true;
+        }
+
+        // set new subset bits
+        uint64_t tmpVerticesSubset = verticesSubset;
+        unsigned long idx = 0, idx2 = 0;
+        for (uint32_t i = 0; i < m - 1; ++i)
+        {
+            _BitScanForward64(&idx, tmpVerticesSubset);
+            idx2 += idx;
+            subsetBitsPos[i + 1] = idx2 + 1;
+            tmpVerticesSubset >>= (idx + 1);
+            ++ idx2;
+        }
+
         verticesSubset <<= 1;
         verticesSubset |= 1;
         return true;
+#pragma warning( default : 4146 )
     };
 
+    Length minLength;
     for (uint32_t m = 2; m <= m_numVertices; ++m)
     {
         getFirstVerticesSubset(m, m_numVertices);
 
         uint32_t numProcessed = 0;
-        uint8_t pos = 2;
         do {
-            if (!(verticesSubset & (1 << (pos - 1))))
+            verticesSubsetToLength[verticesSubset].resize(m_numVertices);
+            for (uint32_t pos1 = 1; pos1 < subsetBitsPos.size(); ++pos1)
             {
-                pos += 1;
+                minLength.m_infinity = true;
+                uint64_t currentVerticesSubset = verticesSubset ^ (1 << subsetBitsPos[pos1]);
+                 
+                for (uint32_t pos2 = 0; pos2 < subsetBitsPos.size(); ++pos2)
+                {
+                    if (pos1 != pos2)
+                    {
+                        if (!verticesSubsetToLength[currentVerticesSubset][subsetBitsPos[pos2]].m_infinity &&
+                            (minLength.m_infinity ||
+                             (verticesSubsetToLength[currentVerticesSubset][subsetBitsPos[pos2]].m_length + m_matrix[subsetBitsPos[pos2]][subsetBitsPos[pos1]].m_cost < minLength.m_length)))
+                        {
+                            minLength.m_infinity = false;
+                            minLength.m_length = verticesSubsetToLength[currentVerticesSubset][subsetBitsPos[pos2]].m_length + m_matrix[subsetBitsPos[pos2]][subsetBitsPos[pos1]].m_cost;
+                        }
+                    }
+                }
+                // TODO: std::move
+                verticesSubsetToLength[verticesSubset][pos1] = minLength;
             }
-            verticesSubsetToLength[verticesSubset ^ (1 << (pos - 1))]
-
-        } while (numProcessed < m_numVertices);
-
-        //verticesSubsetToLength[verticesSubset]
+        } while (getNextVerticesSubset(m));
+        printVerticesSubsetToLength(std::cout);
     }
+
+    getFirstVerticesSubset(m_numVertices, m_numVertices);
+    minLength.m_infinity = true;
+    for (uint32_t pos = 1; pos < subsetBitsPos.size(); ++pos)
+    {
+        if (!verticesSubsetToLength[verticesSubset][subsetBitsPos[pos]].m_infinity &&
+            (minLength.m_infinity ||
+             (verticesSubsetToLength[verticesSubset][subsetBitsPos[pos]].m_length + m_matrix[subsetBitsPos[pos]][0].m_cost < minLength.m_length)))
+        {
+            minLength.m_infinity = false;
+            minLength.m_length = verticesSubsetToLength[verticesSubset][subsetBitsPos[pos]].m_length + m_matrix[subsetBitsPos[pos]][0].m_cost;
+        }
+    }
+    length = minLength.m_length;
 
     return true;
 }

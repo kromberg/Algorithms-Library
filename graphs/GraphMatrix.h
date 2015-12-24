@@ -89,7 +89,7 @@ public:
     bool doesVertexCoverExists(const uint32_t k);
 
     // Traveling Salesman Problem
-    bool travelingSalesmanProblem(Path& path);
+    bool travelingSalesmanProblem(double& length, Path& path);
 };
 
 inline const bool GraphMatrix::isDirected() const

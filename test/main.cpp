@@ -68,9 +68,9 @@ void optimalBSTFunc()
     std::cin.get();
 }
 
-void readGraphMatrix(GraphMatrix &graphMatrix)
+void readGraphMatrix(GraphMatrix &graphMatrix, const std::string graphFilename = "graph.in")
 {
-    std::ifstream fin("graph.in");
+    std::ifstream fin(graphFilename.c_str());
 
     if (!graphMatrix.read(fin))
     {
@@ -212,9 +212,23 @@ void JohnsonFunc()
     std::cin.get();
 }
 
+void TspFunc()
+{
+    GraphMatrix graphMatrix;
+    readGraphMatrix(graphMatrix, "graph.tsp.in");
+    graphMatrix.write(std::cout);
+
+    GraphMatrix::Path path;
+    double length = 0;
+    graphMatrix.travelingSalesmanProblem(length, path);
+    std::cout << "Length : " << length << std::endl;
+
+    std::cin.get();
+}
+
 int main(int argc, const char * argv[])
 {
-    VertexCoverFunc();
+    TspFunc();
     
     return 0;
 }

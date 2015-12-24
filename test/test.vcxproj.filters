@@ -35,5 +35,8 @@
     <None Include="optimal_bst.in">
       <Filter>Input Files</Filter>
     </None>
+    <None Include="graph.tsp.in">
+      <Filter>Input Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

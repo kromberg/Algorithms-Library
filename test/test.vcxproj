@@ -131,6 +131,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="graph.in" />
+    <None Include="graph.tsp.in" />
     <None Include="knapsack.in" />
     <None Include="optimal_bst.in" />
     <None Include="sequence_alignment.in" />
