@@ -13,36 +13,24 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Input Files">
-      <UniqueIdentifier>{4c6e610c-9b28-4ee1-a627-e79d8c9e10dc}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClInclude Include="SherlockMinimax.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LongestIncrSubseq.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="SherlockMinimax.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="graph.in">
-      <Filter>Input Files</Filter>
-    </None>
-    <None Include="knapsack.in">
-      <Filter>Input Files</Filter>
-    </None>
-    <None Include="sequence_alignment.in">
-      <Filter>Input Files</Filter>
-    </None>
-    <None Include="optimal_bst.in">
-      <Filter>Input Files</Filter>
-    </None>
-    <None Include="graph.tsp.in">
-      <Filter>Input Files</Filter>
-    </None>
-    <None Include="sherlock_minimax.in">
-      <Filter>Input Files</Filter>
-    </None>
-    <None Include="longest_increasing_subsequence.in">
-      <Filter>Input Files</Filter>
-    </None>
+    <ClCompile Include="test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LongestIncrSubseq.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

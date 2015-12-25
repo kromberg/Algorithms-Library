@@ -15,6 +15,8 @@
 #include "General/Knapsack.h"
 #include "General/SequenceAlignment.h"
 #include "General/OptimalBST.h"
+#include "hackerrank/SherlockMinimax.h"
+#include "hackerrank/LongestIncrSubseq.h"
 
 void knapsackFunc()
 {
@@ -251,9 +253,34 @@ void TspFunc()
     std::cin.get();
 }
 
+void SherlockMinimaxFunc()
+{
+    SherlockMinimax sherlockMinimax;
+    std::ifstream fin("sherlock_minimax.in");
+    fin >> sherlockMinimax;
+    int32_t res = 0;
+    int32_t val = 0;
+    sherlockMinimax.runAlgorithm(res, val);
+    std::cout << "Result : " << res << " Value : " << val << std::endl;
+
+    std::cin.get();
+}
+
+void LongestIncrSubseqFunc()
+{
+    LongestIncrSubseq longestIncrSubseq;
+    std::ifstream fin("longest_increasing_subsequence.in");
+    fin >> longestIncrSubseq;
+    uint32_t res = 0;
+    longestIncrSubseq.runAlgorithm(res);
+    std::cout << res << std::endl;
+
+    std::cin.get();
+}
+
 int main(int argc, const char * argv[])
 {
-    knapsackFunc();
+    LongestIncrSubseqFunc();
     
     return 0;
 }
