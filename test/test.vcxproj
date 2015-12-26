@@ -133,6 +133,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="almost_sorted.in" />
     <None Include="graph.in" />
     <None Include="graph.tsp.in" />
     <None Include="knapsack.in" />

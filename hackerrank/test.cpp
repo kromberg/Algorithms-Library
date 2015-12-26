@@ -6,84 +6,208 @@ THIS IS TEST FILE FOR CONNECTING RESULTS IN ONE FILE
 #include <vector>
 #include <fstream>
 #include <iostream>
-#include <algorithm>
+#include <string>
 
-class LongestIncrSubseq
+class AlmostSorted
 {
-private:
-    std::vector<uint32_t> m_elements;
 public:
+    struct Anomaly
+    {
+        std::string m_what;
+        std::pair<uint32_t, uint32_t> m_indices;
+    };
+private:
+    uint32_t m_numElements;
+    std::vector<uint32_t> m_array;
 
-    LongestIncrSubseq()
+public:
+    AlmostSorted()
     {
     }
 
 
-    ~LongestIncrSubseq()
+    ~AlmostSorted()
     {
     }
 
-    bool runOptimizedAlgorithm(uint32_t& res /*todo: sequence*/)
+    bool runAlgorithm(Anomaly& anomaly)
     {
-        uint32_t numElements = static_cast<uint32_t>(m_elements.size());
-        std::vector<uint32_t> sortedElements;
-        sortedElements.reserve(numElements);
-        sortedElements.push_back(m_elements[0]);
-        res = 1;
-        for (uint32_t i = 1; i < numElements; ++i)
+        std::vector<uint32_t> anomaly1;
+        std::vector<uint32_t> anomaly2;
+        if (m_numElements == 1)
         {
-            if (m_elements[i] < sortedElements.front())
+            return true;
+        }
+        else if (m_numElements == 2)
+        {
+            if (m_array[0] > m_array[1])
             {
-                sortedElements.front() = m_elements[i];
+                anomaly.m_what = "swap";
+                anomaly.m_indices = std::make_pair(0, 1);
             }
-            else if (m_elements[i] > sortedElements.back())
+            return true;
+        }
+        if (m_array[0] > m_array[1])
+        {
+            anomaly1.push_back(0);
+        }
+        for (uint32_t i = 0; i < m_numElements - 2; ++i)
+        {
+            if (m_array[i] < m_array[i + 1] &&
+                m_array[i + 1] > m_array[i + 2] &&
+                m_array[i] < m_array[i + 2])
             {
-                sortedElements.push_back(m_elements[i]);
-                ++res;
+                anomaly1.push_back(i + 1);
+            }
+            else if (m_array[i] > m_array[i + 1] &&
+                m_array[i + 2] > m_array[i + 1] &&
+                m_array[i] < m_array[i + 2])
+            {
+                anomaly2.push_back(i + 1);
+            }
+            /*else if (m_array[i] <= m_array[i + 1] && m_array[i + 1] <= m_array[i + 2])
+            {
+            continue;
+            }*/
+        }
+        if (m_array[m_numElements - 2] > m_array[m_numElements - 1])
+        {
+            anomaly2.push_back(m_numElements - 1);
+        }
+        if (anomaly1.size() == 0 && anomaly2.size() == 0)
+        {
+            return true;
+        }
+
+        if (anomaly1.size() == 1 && anomaly2.size() == 1)
+        {
+            std::swap(m_array[anomaly1.front()], m_array[anomaly2.front()]);
+            bool good = true;
+            for (uint32_t i = 0; i < m_numElements - 1; ++i)
+            {
+                if (m_array[i] > m_array[i + 1])
+                {
+                    good = false;
+                    break;
+                }
+            }
+            if (good)
+            {
+                anomaly.m_what = "swap";
+                anomaly.m_indices = std::make_pair(anomaly1.front(), anomaly2.front());
+                return true;
+            }
+            std::swap(m_array[anomaly1.front()], m_array[anomaly2.front()]);
+        }
+        std::vector<std::pair<uint32_t, uint32_t> > anomaly3;
+        std::vector<std::pair<uint32_t, uint32_t> > anomaly4;
+        auto currentAnomaly = anomaly3.end();
+        for (uint32_t i = 0; i < m_numElements - 1; ++i)
+        {
+            if (m_array[i] > m_array[i + 1])
+            {
+                if (anomaly3.end() == currentAnomaly)
+                {
+                    currentAnomaly = anomaly3.insert(anomaly3.end(), std::make_pair(i, i + 1));
+                }
+                else
+                {
+                    currentAnomaly->second = i + 1;
+                }
             }
             else
             {
-                auto it = std::lower_bound(sortedElements.begin(), sortedElements.end(), m_elements[i]);
-                if (sortedElements.end() != it)
+                if (anomaly3.end() != currentAnomaly)
                 {
-                    *it = m_elements[i];
+                    if (currentAnomaly->first == 0)
+                    {
+                        if (m_array[currentAnomaly->first] > m_array[i + 1])
+                        {
+                            anomaly3.erase(currentAnomaly);
+                        }
+                    }
+                    else
+                    {
+                        /* debug
+                        std::cout << "First - 1 : " << m_array[currentAnomaly->first - 1] << std::endl;
+                        std::cout << "First : " << m_array[currentAnomaly->first] << std::endl;
+                        std::cout << "Second : " << m_array[currentAnomaly->second] << std::endl;
+                        std::cout << "Second + 1: " << m_array[currentAnomaly->second + 1] << std::endl;
+                        */
+
+                        if ((m_array[currentAnomaly->first] > m_array[currentAnomaly->second + 1]) ||
+                            (m_array[currentAnomaly->first - 1] > m_array[currentAnomaly->second]))
+                        {
+                            anomaly4.push_back(*currentAnomaly);
+                            anomaly3.erase(currentAnomaly);
+                        }
+                    }
+                    currentAnomaly = anomaly3.end();
+                }
+            }
+        }
+        if (anomaly3.end() != currentAnomaly)
+        {
+            if (currentAnomaly->first != 0)
+            {
+                if (m_array[currentAnomaly->first - 1] > m_array[currentAnomaly->second])
+                {
+                    anomaly4.push_back(*currentAnomaly);
+                    anomaly3.erase(currentAnomaly);
                 }
             }
         }
 
-        return true;
+        if (anomaly4.empty() && anomaly3.size() == 1)
+        {
+            anomaly.m_what = "reverse";
+            anomaly.m_indices = anomaly3.front();
+            return true;
+        }
+
+        return false;
     }
 
 
-
-    friend std::istream& operator>>(std::istream& in, LongestIncrSubseq& l);
+    friend std::istream& operator>>(std::istream& in, AlmostSorted& almostSorted);
 };
 
-std::istream& operator>>(std::istream& in, LongestIncrSubseq& l)
+std::istream& operator>>(std::istream& in, AlmostSorted& almostSorted)
 {
-    uint32_t numElements = 0;
-    in >> numElements;
-    l.m_elements.resize(numElements);
-    for (auto& element : l.m_elements)
+    in >> almostSorted.m_numElements;
+    almostSorted.m_array.resize(almostSorted.m_numElements);
+    for (auto& element : almostSorted.m_array)
     {
         in >> element;
     }
     return in;
 }
 
-void LongestIncrSubseqFunc()
+
+void AlmostSortedFunc()
 {
-    LongestIncrSubseq longestIncrSubseq;
-    std::cin >> longestIncrSubseq;
-    uint32_t res = 0;
-    longestIncrSubseq.runOptimizedAlgorithm(res);
-    std::cout << res << std::endl;
+    AlmostSorted almostSorted;
+    std::cin >> almostSorted;
+    AlmostSorted::Anomaly anomaly;
+    bool res = almostSorted.runAlgorithm(anomaly);
+    if (!res)
+    {
+        std::cout << "no" << std::endl;
+    }
+    else
+    {
+        std::cout << "yes" << std::endl;
+        if (!anomaly.m_what.empty())
+        {
+            std::cout << anomaly.m_what << ' ' << anomaly.m_indices.first + 1 << ' ' << anomaly.m_indices.second + 1 << std::endl;
+        }
+    }
 }
 
 int main(int argc, const char * argv[])
 {
-    LongestIncrSubseqFunc();
+    AlmostSortedFunc();
 
     return 0;
 }
-#endif 
+#endif

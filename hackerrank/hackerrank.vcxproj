@@ -115,10 +115,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AlmostSorted.h" />
     <ClInclude Include="LongestIncrSubseq.h" />
     <ClInclude Include="SherlockMinimax.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AlmostSorted.cpp" />
     <ClCompile Include="LongestIncrSubseq.cpp" />
     <ClCompile Include="SherlockMinimax.cpp" />
     <ClCompile Include="test.cpp" />

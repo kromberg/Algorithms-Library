@@ -17,6 +17,7 @@
 #include "General/OptimalBST.h"
 #include "hackerrank/SherlockMinimax.h"
 #include "hackerrank/LongestIncrSubseq.h"
+#include "hackerrank/AlmostSorted.h"
 
 void knapsackFunc()
 {
@@ -278,9 +279,32 @@ void LongestIncrSubseqFunc()
     std::cin.get();
 }
 
+void AlmostSortedFunc()
+{
+    AlmostSorted almostSorted;
+    std::ifstream fin("almost_sorted.in");
+    fin >> almostSorted;
+    AlmostSorted::Anomaly anomaly;
+    bool res = almostSorted.runAlgorithm(anomaly);
+    if (!res)
+    {
+        std::cout << "no" << std::endl;
+    }
+    else
+    {
+        std::cout << "yes" << std::endl;
+        if (!anomaly.m_what.empty())
+        {
+            std::cout << anomaly.m_what << ' ' << anomaly.m_indices.first + 1 << ' ' << anomaly.m_indices.second + 1<< std::endl;
+        }
+    }
+
+    std::cin.get();
+}
+
 int main(int argc, const char * argv[])
 {
-    LongestIncrSubseqFunc();
+    AlmostSortedFunc();
     
     return 0;
 }

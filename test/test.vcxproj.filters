@@ -47,5 +47,8 @@
     <None Include="longest_increasing_subsequence.long.in">
       <Filter>Input Files</Filter>
     </None>
+    <None Include="almost_sorted.in">
+      <Filter>Input Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
