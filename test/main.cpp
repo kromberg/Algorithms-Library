@@ -19,6 +19,7 @@
 #include "hackerrank/LongestIncrSubseq.h"
 #include "hackerrank/AlmostSorted.h"
 #include "hackerrank/Clique.h"
+#include "hackerrank/SansaAndXOR.h"
 
 void knapsackFunc()
 {
@@ -320,9 +321,26 @@ void CliqueFunc()
     std::cin.get();
 }
 
+void SansaAndXORFunc()
+{
+    SansaAndXOR sansaAndXOR;
+    std::ifstream fin("sansa_xor.in");
+    uint32_t numTestcases = 0;
+    fin >> numTestcases;
+    while (numTestcases--)
+    {
+        fin >> sansaAndXOR;
+        uint32_t res = 0;
+        sansaAndXOR.runAlgorithm(res);
+        std::cout << res << std::endl;
+    }
+
+    std::cin.get();
+}
+
 int main(int argc, const char * argv[])
 {
-    CliqueFunc();
+    SansaAndXORFunc();
     
     return 0;
 }

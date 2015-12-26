@@ -118,12 +118,14 @@
     <ClInclude Include="AlmostSorted.h" />
     <ClInclude Include="Clique.h" />
     <ClInclude Include="LongestIncrSubseq.h" />
+    <ClInclude Include="SansaAndXOR.h" />
     <ClInclude Include="SherlockMinimax.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AlmostSorted.cpp" />
     <ClCompile Include="Clique.cpp" />
     <ClCompile Include="LongestIncrSubseq.cpp" />
+    <ClCompile Include="SansaAndXOR.cpp" />
     <ClCompile Include="SherlockMinimax.cpp" />
     <ClCompile Include="test.cpp" />
   </ItemGroup>

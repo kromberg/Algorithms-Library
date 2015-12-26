@@ -3,73 +3,85 @@ THIS IS TEST FILE FOR CONNECTING RESULTS IN ONE FILE
 ******************************************************************************/
 #if 0
 #include <cstdint>
+#include <vector>
 #include <fstream>
 #include <iostream>
-#include <cmath>
-#include <vector>
-#include <algorithm>
 
-class Clique
+class SansaAndXOR
 {
 private:
-    uint32_t m_numVertices;
-    uint32_t m_numEdges;
+    uint32_t m_numElements;
+    std::vector<uint32_t> m_elements;
 
 public:
-    Clique()
+    SansaAndXOR()
     {
     }
 
-
-    ~Clique()
+    ~SansaAndXOR()
     {
     }
 
-    bool runAlgorithm(uint32_t& cliqueNumVertices)
+    bool runAlgorithm(uint32_t& res)
     {
-        for (uint32_t r = 1; r <= m_numVertices; ++r)
+        res = 0;
+        uint32_t power = 0;
+        for (uint32_t k = 0; k < m_numElements; ++k)
         {
-            uint32_t tmp1 = static_cast<uint32_t>(ceil(static_cast<long double>(m_numVertices) / r));
-            tmp1 *= tmp1;
-            uint32_t tmp2 = static_cast<uint32_t>(floor(static_cast<long double>(m_numVertices) / r));
-            tmp2 *= tmp2;
-            uint32_t tmp3 = m_numVertices % r;
-            uint32_t numVerticesForClique = (m_numVertices * m_numVertices - tmp3 * tmp1 - (r - tmp3) * tmp2) / 2;
-            if (numVerticesForClique >= m_numEdges)
+            if (k + 1 < m_numElements / 2)
             {
-                cliqueNumVertices = r;
-                return true;
+                power = m_numElements * (k + 1) - (k + 1) * k;
+                if (power & 1)
+                {
+                    res ^= m_elements[k];
+                }
+            }
+            else
+            {
+                uint32_t m = m_numElements + 1 - (k + 1);
+                power = m_numElements * m - m * (m - 1);
+                if (power & 1)
+                {
+                    res ^= m_elements[k];
+                }
             }
         }
-        return false;
+        return true;
     }
 
-    friend std::istream& operator>> (std::istream& in, Clique& clique);
+    friend std::istream& operator>> (std::istream& in, SansaAndXOR& sansaAndXor);
 };
-std::istream& operator>> (std::istream& in, Clique& clique)
+
+std::istream& operator>> (std::istream& in, SansaAndXOR& sansaAndXor)
 {
-    return in >> clique.m_numVertices >> clique.m_numEdges;
+    in >> sansaAndXor.m_numElements;
+    sansaAndXor.m_elements.resize(sansaAndXor.m_numElements);
+    for (auto& element : sansaAndXor.m_elements)
+    {
+        in >> element;
+    }
+    return in;
 }
 
-void CliqueFunc()
+void SansaAndXORFunc()
 {
-    Clique clique;
+    SansaAndXOR sansaAndXOR;
     uint32_t numTestcases = 0;
     std::cin >> numTestcases;
     while (numTestcases--)
     {
-        std::cin >> clique;
+        std::cin >> sansaAndXOR;
         uint32_t res = 0;
-        clique.runAlgorithm(res);
+        sansaAndXOR.runAlgorithm(res);
         std::cout << res << std::endl;
     }
 
-    //std::cin.get();
+    std::cin.get();
 }
 
 int main(int argc, const char * argv[])
 {
-    CliqueFunc();
+    SansaAndXORFunc();
 
     return 0;
 }
