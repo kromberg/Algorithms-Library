@@ -50,5 +50,11 @@
     <None Include="almost_sorted.in">
       <Filter>Input Files</Filter>
     </None>
+    <None Include="clique.in">
+      <Filter>Input Files</Filter>
+    </None>
+    <None Include="clique.long.in">
+      <Filter>Input Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

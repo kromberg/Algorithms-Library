@@ -18,6 +18,7 @@
 #include "hackerrank/SherlockMinimax.h"
 #include "hackerrank/LongestIncrSubseq.h"
 #include "hackerrank/AlmostSorted.h"
+#include "hackerrank/Clique.h"
 
 void knapsackFunc()
 {
@@ -302,9 +303,26 @@ void AlmostSortedFunc()
     std::cin.get();
 }
 
+void CliqueFunc()
+{
+    Clique clique;
+    std::ifstream fin("clique.in");
+    uint32_t numTestcases = 0;
+    fin >> numTestcases;
+    while (numTestcases--)
+    {
+        fin >> clique;
+        uint32_t res = 0;
+        clique.runAlgorithm(res);
+        std::cout << res << std::endl;
+    }
+
+    std::cin.get();
+}
+
 int main(int argc, const char * argv[])
 {
-    AlmostSortedFunc();
+    CliqueFunc();
     
     return 0;
 }

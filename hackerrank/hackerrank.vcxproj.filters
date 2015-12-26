@@ -24,6 +24,9 @@
     <ClInclude Include="AlmostSorted.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Clique.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SherlockMinimax.cpp">
@@ -36,6 +39,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="AlmostSorted.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Clique.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
