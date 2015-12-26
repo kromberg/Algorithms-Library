@@ -117,6 +117,7 @@
   <ItemGroup>
     <ClInclude Include="AlmostSorted.h" />
     <ClInclude Include="Clique.h" />
+    <ClInclude Include="JackGoesToRapture.h" />
     <ClInclude Include="LongestIncrSubseq.h" />
     <ClInclude Include="SansaAndXOR.h" />
     <ClInclude Include="SherlockMinimax.h" />
@@ -124,6 +125,7 @@
   <ItemGroup>
     <ClCompile Include="AlmostSorted.cpp" />
     <ClCompile Include="Clique.cpp" />
+    <ClCompile Include="JackGoesToRapture.cpp" />
     <ClCompile Include="LongestIncrSubseq.cpp" />
     <ClCompile Include="SansaAndXOR.cpp" />
     <ClCompile Include="SherlockMinimax.cpp" />

@@ -20,6 +20,7 @@
 #include "hackerrank/AlmostSorted.h"
 #include "hackerrank/Clique.h"
 #include "hackerrank/SansaAndXOR.h"
+#include "hackerrank/JackGoesToRapture.h"
 
 void knapsackFunc()
 {
@@ -338,9 +339,21 @@ void SansaAndXORFunc()
     std::cin.get();
 }
 
+void JackGoesToRaptureFunc()
+{
+    JackGoesToRapture jackGoesToRapture;
+    std::ifstream fin("jack_goes_to_rapture.long2.in");
+    fin >> jackGoesToRapture;
+    int32_t res = 0;
+    jackGoesToRapture.runAlgorithm(res);
+    std::cout << res << std::endl;
+    
+    std::cin.get();
+}
+
 int main(int argc, const char * argv[])
 {
-    SansaAndXORFunc();
+    JackGoesToRaptureFunc();
     
     return 0;
 }

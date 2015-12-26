@@ -59,5 +59,17 @@
     <None Include="sansa_xor.in">
       <Filter>Input Files</Filter>
     </None>
+    <None Include="jack_goes_to_rapture.in">
+      <Filter>Input Files</Filter>
+    </None>
+    <None Include="jack_goes_to_rapture.long.in">
+      <Filter>Input Files</Filter>
+    </None>
+    <None Include="jack_goes_to_rapture.long2.in">
+      <Filter>Input Files</Filter>
+    </None>
+    <None Include="jack_goes_to_rapture2.in">
+      <Filter>Input Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

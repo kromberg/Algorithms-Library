@@ -138,6 +138,10 @@
     <None Include="clique.long.in" />
     <None Include="graph.in" />
     <None Include="graph.tsp.in" />
+    <None Include="jack_goes_to_rapture.in" />
+    <None Include="jack_goes_to_rapture.long.in" />
+    <None Include="jack_goes_to_rapture.long2.in" />
+    <None Include="jack_goes_to_rapture2.in" />
     <None Include="knapsack.in" />
     <None Include="longest_increasing_subsequence.in" />
     <None Include="longest_increasing_subsequence.long.in" />
