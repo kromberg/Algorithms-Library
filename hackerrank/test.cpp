@@ -6,7 +6,7 @@ THIS IS TEST FILE FOR CONNECTING RESULTS IN ONE FILE
 #include <vector>
 #include <fstream>
 #include <iostream>
-#include <map>
+#include <algorithm>
 
 class LongestIncrSubseq
 {
@@ -23,58 +23,31 @@ public:
     {
     }
 
-    bool runAlgorithm(uint32_t& res /*todo: sequence*/)
+    bool runOptimizedAlgorithm(uint32_t& res /*todo: sequence*/)
     {
         uint32_t numElements = static_cast<uint32_t>(m_elements.size());
-        std::map<uint32_t, uint32_t> entities;
-        entities[m_elements[0]] = 1;
-
-        struct
-        {
-            bool m_set;
-            uint32_t m_maxElements;
-        } maxEntity;
+        std::vector<uint32_t> sortedElements;
+        sortedElements.reserve(numElements);
+        sortedElements.push_back(m_elements[0]);
+        res = 1;
         for (uint32_t i = 1; i < numElements; ++i)
         {
-            maxEntity.m_set = false;
-            for (auto it = entities.begin(); it != entities.end() && it->first < m_elements[i]; ++it)
+            if (m_elements[i] < sortedElements.front())
             {
-                if (!maxEntity.m_set ||
-                    (it->second > maxEntity.m_maxElements))
-                {
-                    maxEntity.m_set = true;
-                    maxEntity.m_maxElements = it->second;
-                }
+                sortedElements.front() = m_elements[i];
             }
-
-            if (!maxEntity.m_set)
+            else if (m_elements[i] > sortedElements.back())
             {
-                auto it = entities.find(m_elements[i]);
-                if (entities.end() == it)
-                {
-                    entities.insert(std::make_pair(m_elements[i], 1));
-                }
+                sortedElements.push_back(m_elements[i]);
+                ++res;
             }
             else
             {
-                auto it = entities.find(m_elements[i]);
-                if (entities.end() == it)
+                auto it = std::lower_bound(sortedElements.begin(), sortedElements.end(), m_elements[i]);
+                if (sortedElements.end() != it)
                 {
-                    entities.insert(std::make_pair(m_elements[i], maxEntity.m_maxElements + 1));
+                    *it = m_elements[i];
                 }
-                else if (it->second < maxEntity.m_maxElements + 1)
-                {
-                    it->second = maxEntity.m_maxElements + 1;
-                }
-            }
-        }
-
-        res = 0;
-        for (auto& entity: entities)
-        {
-            if (entity.second > res)
-            {
-                res = entity.second;
             }
         }
 
@@ -103,7 +76,7 @@ void LongestIncrSubseqFunc()
     LongestIncrSubseq longestIncrSubseq;
     std::cin >> longestIncrSubseq;
     uint32_t res = 0;
-    longestIncrSubseq.runAlgorithm(res);
+    longestIncrSubseq.runOptimizedAlgorithm(res);
     std::cout << res << std::endl;
 }
 

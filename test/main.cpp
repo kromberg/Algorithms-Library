@@ -269,10 +269,10 @@ void SherlockMinimaxFunc()
 void LongestIncrSubseqFunc()
 {
     LongestIncrSubseq longestIncrSubseq;
-    std::ifstream fin("longest_increasing_subsequence.in");
+    std::ifstream fin("longest_increasing_subsequence.long.in");
     fin >> longestIncrSubseq;
     uint32_t res = 0;
-    longestIncrSubseq.runAlgorithm(res);
+    longestIncrSubseq.runOptimizedAlgorithm(res);
     std::cout << res << std::endl;
 
     std::cin.get();

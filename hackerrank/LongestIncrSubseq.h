@@ -15,7 +15,9 @@ public:
     LongestIncrSubseq();
     ~LongestIncrSubseq();
 
-    bool runAlgorithm(uint32_t& res /*todo: sequence*/);
+    bool runAlgorithm1(uint32_t& res /*todo: sequence*/);
+    bool runAlgorithm2(uint32_t& res /*todo: sequence*/);
+    bool runOptimizedAlgorithm(uint32_t& res /*todo: sequence*/);
 
     friend std::istream& operator>>(std::istream& in, LongestIncrSubseq& l);
 };

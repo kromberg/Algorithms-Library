@@ -1,4 +1,6 @@
 #include <set>
+#include <map>
+#include <algorithm>
 
 #include "LongestIncrSubseq.h"
 
@@ -11,7 +13,7 @@ LongestIncrSubseq::~LongestIncrSubseq()
 {
 }
 
-bool LongestIncrSubseq::runAlgorithm(uint32_t& res /*todo: sequence*/)
+bool LongestIncrSubseq::runAlgorithm1(uint32_t& res /*todo: sequence*/)
 {
     uint32_t numElements = static_cast<uint32_t>(m_elements.size());
     std::vector<uint32_t> entitiesMatrix;
@@ -47,7 +49,7 @@ bool LongestIncrSubseq::runAlgorithm(uint32_t& res /*todo: sequence*/)
     }
 
     res = 0;
-    for (auto& entity: entitiesMatrix)
+    for (auto& entity : entitiesMatrix)
     {
         if (entity > res)
         {
@@ -56,8 +58,10 @@ bool LongestIncrSubseq::runAlgorithm(uint32_t& res /*todo: sequence*/)
     }
 
     return true;
+}
 
-#if 0 
+bool LongestIncrSubseq::runAlgorithm2(uint32_t& res /*todo: sequence*/)
+{
     uint32_t numElements = static_cast<uint32_t>(m_elements.size());
     std::map<uint32_t, uint32_t> entities;
     entities[m_elements[0]] = 1;
@@ -112,7 +116,37 @@ bool LongestIncrSubseq::runAlgorithm(uint32_t& res /*todo: sequence*/)
     }
 
     return true;
-#endif 
+}
+
+bool LongestIncrSubseq::runOptimizedAlgorithm(uint32_t& res /*todo: sequence*/)
+{
+    uint32_t numElements = static_cast<uint32_t>(m_elements.size());
+    std::vector<uint32_t> sortedElements;
+    sortedElements.reserve(numElements);
+    sortedElements.push_back(m_elements[0]);
+    res = 1;
+    for (uint32_t i = 1; i < numElements; ++i)
+    {
+        if (m_elements[i] < sortedElements.front())
+        {
+            sortedElements.front() = m_elements[i];
+        }
+        else if (m_elements[i] > sortedElements.back())
+        {
+            sortedElements.push_back(m_elements[i]);
+            ++res;
+        }
+        else
+        {
+            auto it = std::lower_bound(sortedElements.begin(), sortedElements.end(), m_elements[i]);
+            if (sortedElements.end() != it)
+            {
+                *it = m_elements[i];
+            }
+        }
+    }
+
+    return true;
 }
 
 std::istream& operator>>(std::istream& in, LongestIncrSubseq& l)
