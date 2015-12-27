@@ -17,93 +17,72 @@
 #include <fstream>
 #include <cstdint>
 
-// forward declarartion
-struct Vertex;
-struct Edge;
-
-typedef std::list<Vertex*> VerticesList;
-typedef std::vector<Vertex*> VerticesVector;
-typedef std::list<Edge*> EdgesList;
-typedef std::map<uint32_t, Edge*> EdgesMap;
-
-struct EdgeScore
-{
-    Edge* m_edge;
-    int32_t m_score;
-    EdgeScore(Edge* edge, int32_t score):
-        m_edge(edge),
-        m_score(score)
-    {}
-    EdgeScore(EdgeScore&& es)
-    {
-        m_edge = es.m_edge;
-        m_score = es.m_score;
-        es.m_edge = nullptr;
-        es.m_score = 0;
-    }
-};
-
-struct Vertex
-{
-    EdgesMap m_edgesList;
-    uint32_t m_id;
-    bool m_explored;
-    
-    Vertex(const uint32_t id):
-        m_edgesList(),
-        m_id(id),
-        m_explored(false)
-    {}
-    ~Vertex()
-    {
-        m_edgesList.clear();
-    }
-};
-
-struct Edge
-{
-    Vertex* m_begin;
-    Vertex* m_end;
-    int32_t m_cost;
-};
-
 class Graph
 {
+public:
+    struct Edge
+    {
+        int32_t m_begin;
+        int32_t m_end;
+        int32_t m_cost;
+        Edge();
+        Edge(const int32_t begin, const int32_t end, const int32_t cost);
+        Edge(const Edge& edge);
+        Edge& operator= (const Edge& edge);
+        Edge(Edge&& edge);
+        Edge& operator= (Edge&& edge);
+    };
+    typedef std::list<Edge> EdgesList;
+    struct Vertex
+    {
+        EdgesList m_edges;
+        bool m_explored;
+
+        Vertex();
+        Vertex(const Vertex& vertex);
+        Vertex& operator= (const Vertex& vertex);
+        Vertex(Vertex&& vertex);
+        Vertex& operator=(Vertex&& vertex);
+        ~Vertex();
+    };
+    typedef std::vector<Vertex> VerticesVector;
+
 private:
-    VerticesList m_vertices;
+    VerticesVector m_vertices;
     EdgesList m_edges;
     bool m_isDirected;
 
-    // non-copyble
-    Graph(const Graph &graph) = delete;
-    Graph& operator=(const Graph &graph) = delete;
+    bool DFSv2(uint32_t startingVertex, std::vector<uint32_t>& labels, uint32_t &currentLabel);
 
 public:
     Graph();
     ~Graph();
+    Graph(const Graph &graph);
+    Graph& operator=(const Graph &graph);
     
     void clear();
     
     bool read(std::istream& in);
     bool write(std::ostream& out);
     
-    const VerticesList& getVertices() const;
+    const VerticesVector& getVertices() const;
     const EdgesList& getEdges() const;
     const bool isDirected() const;
     
-    bool BFS(Vertex* startingVertex);
-    bool DFS(Vertex* startingVertex);
-    bool Dijkstra(Vertex* startingVertex, Vertex* endVertex, int32_t& length);
+    bool BFS(uint32_t startingVertex);
+    bool DFS(uint32_t startingVertex);
+    bool DFSLoop(std::vector<uint32_t> &labels);
+    bool Dijkstra(uint32_t startingVertex, uint32_t endVertex, int32_t& length);
 
     bool doesVertexCoverExists(const uint32_t k);
 };
 
-inline const VerticesList& Graph::getVertices() const
+inline const Graph::VerticesVector& Graph::getVertices() const
 {
     return m_vertices;
 }
 
-inline const EdgesList& Graph::getEdges() const
+inline const Graph::EdgesList& Graph::getEdges() const
 {
     return m_edges;
 }

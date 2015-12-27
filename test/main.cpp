@@ -114,49 +114,23 @@ void BfsDfs()
 {
     std::ifstream fin("graph.in");
     Graph graph;
-    graph.read(fin);
-    const VerticesList& verticesList = graph.getVertices();
-    Vertex *vertex = nullptr;
-    for (auto& verIt : verticesList)
+    if (!graph.read(fin))
     {
-        if (verIt->m_id == 1)
-        {
-            vertex = verIt;
-            break;
-        }
-    }
-    if (!vertex)
-    {
-        std::cout << "Cannot find vertex" << std::endl;
+        std::cout << "Cannot read graph from file" << std::endl;
         exit(2);
     }
-
     std::cout << "BFS from 1" << std::endl;
-    graph.BFS(vertex);
+    graph.BFS(1);
     graph.write(std::cout);
     std::cout << "DFS from 1" << std::endl;
-    graph.DFS(vertex);
+    graph.DFS(1);
     graph.write(std::cout);
 
-    vertex = nullptr;
-    for (auto& verIt : verticesList)
-    {
-        if (verIt->m_id == 6)
-        {
-            vertex = verIt;
-            break;
-        }
-    }
-    if (!vertex)
-    {
-        std::cout << "Cannot find vertex" << std::endl;
-        exit(2);
-    }
     std::cout << "BFS from 6" << std::endl;
-    graph.BFS(vertex);
+    graph.BFS(6);
     graph.write(std::cout);
     std::cout << "DFS from 6" << std::endl;
-    graph.DFS(vertex);
+    graph.DFS(6);
     graph.write(std::cout);
 
     std::cin.get();
@@ -353,7 +327,7 @@ void JackGoesToRaptureFunc()
 
 int main(int argc, const char * argv[])
 {
-    JackGoesToRaptureFunc();
+    BfsDfs();
     
     return 0;
 }
